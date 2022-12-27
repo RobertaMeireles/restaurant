@@ -1,0 +1,18 @@
+{
+    "name": "project/api-restaurant",
+    "description": "Restaurant automation system",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Roberta Meireles",
+            "email": "robertameireles.r@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "core\\": "core/",
+            "models\\": "models"
+        }
+    }
+}
