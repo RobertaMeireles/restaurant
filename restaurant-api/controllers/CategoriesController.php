@@ -14,7 +14,7 @@ class CategoriesController {
     * List categories
     */
     public function list() {
-        $response = 'Hello World';
+        $response = $this->categories->getAllCategories();
         echo json_encode($response);
     }
 

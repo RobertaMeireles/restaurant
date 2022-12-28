@@ -49,6 +49,14 @@ class Database
     }
 
     /*
+    * Get value in database
+    */
+    public function getAll($table) {
+        $stmt = $this->query("call get_data (?)", $table);
+        return $stmt->fetchAll();
+    }
+
+    /*
     * Insert value in database
     */
     public function insert($table, $data) {

@@ -29,6 +29,41 @@ END;
 
 
 
+DROP PROCEDURE IF EXISTS `get_data`;
+
+
+DELIMITER ;;
+CREATE PROCEDURE `get_data`(
+		  IN v_table       VARCHAR(255)
+)
+BEGIN
+	declare queryString VARCHAR(255);
+	SET @queryString = (SELECT CONCAT( 'SELECT * FROM ', v_table));
+	PREPARE myQuery FROM @queryString;
+	EXECUTE myQuery;
+    DEALLOCATE PREPARE myQuery;
+END;
+;;
+
+
+
+DROP PROCEDURE IF EXISTS `where_data`;
+CREATE PROCEDURE `where_data`(
+		  IN v_table                 VARCHAR(255)
+		, IN v_column                VARCHAR(255)
+        , IN v_where                 VARCHAR(255)
+)
+BEGIN
+	declare teste VARCHAR(255);
+        
+    SET @teste = (SELECT CONCAT( 'SELECT ',  v_column , ' FROM ', v_table, ' WHERE ', v_where));
+    PREPARE myquery FROM @teste;
+	EXECUTE myquery;
+    DEALLOCATE PREPARE myquery;
+
+END
+
+
 
 DROP PROCEDURE IF EXISTS `left_join`;
 DELIMITER ;;
@@ -53,20 +88,3 @@ BEGIN
     
 END;
 ;;
-
-
-DROP PROCEDURE IF EXISTS `where_data`;
-CREATE PROCEDURE `where_data`(
-		  IN v_table                 VARCHAR(255)
-		, IN v_column                VARCHAR(255)
-        , IN v_where                 VARCHAR(255)
-)
-BEGIN
-	declare teste VARCHAR(255);
-        
-    SET @teste = (SELECT CONCAT( 'SELECT ',  v_column , ' FROM ', v_table, ' WHERE ', v_where));
-    PREPARE myquery FROM @teste;
-	EXECUTE myquery;
-    DEALLOCATE PREPARE myquery;
-
-END
