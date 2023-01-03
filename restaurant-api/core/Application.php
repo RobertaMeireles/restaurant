@@ -20,8 +20,8 @@ class Application
     public function start() {
         $uri = $this->getUri();
          try {
-            $route = $this->router->get($uri);
-            $this->run($route);
+            [$router, $parameter] = $this->router->get($uri);
+            $this->run($router, $parameter);
          } catch (Exception $e) {
             header("HTTP/1.1 404 Not found");
             die($e->getMessage());
@@ -31,13 +31,15 @@ class Application
     /*
     * Run controller
     */
-    private function run($route) {
+    private function run($route, $parameter) {
+        // echo $value;
+        // die();
         $controller = $route['controller'];
         $action = $route['action'];
         $controllerPath = "../controllers/$controller.php";
         if (file_exists($controllerPath)) {
             require_once $controllerPath; 
-            $instance = new $controller();
+            $instance = new $controller($parameter);
             $instance->$action();
         } else {
             header("HTTP/1.1 404 Not found");

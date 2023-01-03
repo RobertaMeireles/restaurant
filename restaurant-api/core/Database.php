@@ -57,6 +57,14 @@ class Database
     }
 
     /*
+    * Get value by id in database
+    */
+    public function getById($table, $fieldsAsString, $values) {
+        $stmt = $this->query("call get_where_data (?,?,?)", $table, $fieldsAsString, $values);
+        return $stmt->fetch();
+    }
+
+    /*
     * Insert value in database
     */
     public function insert($table, $data) {

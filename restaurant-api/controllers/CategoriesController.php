@@ -5,8 +5,10 @@ use models\Categories;
 class CategoriesController {
 
     private $categories;
+    private $value;
 
-    public function __construct() {
+    public function __construct($ulrParameter) {
+        $this->value = $ulrParameter;
         $this->categories = new Categories();
     }
 
@@ -14,8 +16,15 @@ class CategoriesController {
     * List categories
     */
     public function list() {
-        $response = $this->categories->getAllCategories();
-        echo json_encode($response);
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
+            if ( $this->value ) {
+                $response = $this->categories->getByIdCategories($this->value);
+                echo json_encode($response);
+            }else {
+                $response = $this->categories->getAllCategories();
+                echo json_encode($response);
+            }
+        }
     }
 
     /*

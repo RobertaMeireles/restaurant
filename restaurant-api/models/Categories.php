@@ -8,12 +8,18 @@ class Categories extends Database {
     private $table = 'categories';
 
     /*
-    * List categories 
+    * List all categories 
     */
     public function getAllCategories() {
         return $this->getAll($this->table);
     }
 
+    /*
+    * List category by ID
+    */
+    public function getByIdCategories( $value ) {
+        return $this->getById($this->table, '*', 'id =' . $value);
+    }
 
     /*
     * Add new category 

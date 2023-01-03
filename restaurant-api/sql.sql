@@ -10,7 +10,7 @@ CREATE TABLE `categories` (
 
 
 DROP PROCEDURE IF EXISTS `include_data`;
-DELIMITER ;;
+DELIMITER //
 CREATE PROCEDURE `include_data`(
 		  IN v_table                 VARCHAR(255)
 		, IN v_fields                VARCHAR(255)
@@ -30,9 +30,7 @@ END;
 
 
 DROP PROCEDURE IF EXISTS `get_data`;
-
-
-DELIMITER ;;
+DELIMITER //
 CREATE PROCEDURE `get_data`(
 		  IN v_table       VARCHAR(255)
 )
@@ -47,26 +45,27 @@ END;
 
 
 
-DROP PROCEDURE IF EXISTS `where_data`;
-CREATE PROCEDURE `where_data`(
+DROP PROCEDURE IF EXISTS `get_where_data`;
+DELIMITER //
+CREATE PROCEDURE `get_where_data`(
 		  IN v_table                 VARCHAR(255)
 		, IN v_column                VARCHAR(255)
         , IN v_where                 VARCHAR(255)
 )
 BEGIN
-	declare teste VARCHAR(255);
-        
-    SET @teste = (SELECT CONCAT( 'SELECT ',  v_column , ' FROM ', v_table, ' WHERE ', v_where));
-    PREPARE myquery FROM @teste;
-	EXECUTE myquery;
-    DEALLOCATE PREPARE myquery;
+	declare queryString VARCHAR(255);   
+    SET @queryString =  (SELECT CONCAT( 'SELECT ',  v_column , ' FROM ', v_table, ' WHERE ', v_where));
+    PREPARE myQuery FROM @queryString;
+	EXECUTE myQuery;
+    DEALLOCATE PREPARE myQuery;
 
-END
+END;
+;;
 
 
 
 DROP PROCEDURE IF EXISTS `left_join`;
-DELIMITER ;;
+DELIMITER //
 CREATE PROCEDURE `left_join`(
 		  IN v_table_1               VARCHAR(255)
 		, IN v_table_2               VARCHAR(255)

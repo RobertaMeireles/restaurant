@@ -10,7 +10,6 @@ class Router {
 
     private $routes;
 
-
     public function __construct() {
         $this->routes = require '../config/routes.config.php';
     }
@@ -20,10 +19,16 @@ class Router {
     */
     public function get($uri) {
         try {
-            if (in_array($uri, array_keys($this->routes))) {
+            $url = explode('/', $uri);
+            $value = is_numeric($url[count($url)-1]) ? $url[count($url)-1] : false;
+            if ( $value ) {
+                array_pop($url);
+            } 
+            $url = implode(',', $url);
+            if (in_array($url, array_keys($this->routes))) {
                 foreach($this->routes as $key => $row){
-                    if($key == $uri){
-                        return $row;
+                    if($key == $url){
+                        return [$row, $value];
                     }
                 }
             }
