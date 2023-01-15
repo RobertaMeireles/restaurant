@@ -32,8 +32,6 @@ class Application
     * Run controller
     */
     private function run($route, $parameter) {
-        // echo $value;
-        // die();
         $controller = $route['controller'];
         $action = $route['action'];
         $controllerPath = "../controllers/$controller.php";
@@ -43,6 +41,8 @@ class Application
             $instance->$action();
         } else {
             header("HTTP/1.1 404 Not found");
+            $response = json_encode(['status' => 0, 'message' => "This route doesn't exist"]);
+            echo $response;
         }
     }
  

@@ -63,6 +63,36 @@ END;
 ;;
 
 
+CREATE PROCEDURE `update_data`(
+		 IN v_table                  VARCHAR(255)
+		, IN v_value                  VARCHAR(255)
+        , IN v_where                 VARCHAR(255)
+)
+BEGIN
+	declare queryString VARCHAR(255);   
+    SET @queryString =  (SELECT CONCAT( 'UPDATE ',  v_table , ' SET ' , v_value , ' WHERE ',  v_where));
+    PREPARE myQuery FROM @queryString;
+	EXECUTE myQuery;
+    DEALLOCATE PREPARE myQuery;
+END;
+;;
+
+
+DROP PROCEDURE IF EXISTS `delete_data`;
+DELIMITER // 
+CREATE PROCEDURE `delete_data`(
+		  IN v_table                 VARCHAR(255)
+        , IN v_where                 VARCHAR(255)
+)
+BEGIN
+	declare queryString VARCHAR(255);   
+    SET @queryString =  (SELECT CONCAT( 'DELETE FROM  ',  v_table , ' WHERE ',  v_where));
+    PREPARE myQuery FROM @queryString;
+	EXECUTE myQuery;
+    DEALLOCATE PREPARE myQuery;
+END;
+;;
+
 
 DROP PROCEDURE IF EXISTS `left_join`;
 DELIMITER //
@@ -87,3 +117,5 @@ BEGIN
     
 END;
 ;;
+
+

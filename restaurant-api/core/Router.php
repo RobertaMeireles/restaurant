@@ -24,7 +24,7 @@ class Router {
             if ( $value ) {
                 array_pop($url);
             } 
-            $url = implode(',', $url);
+            $url = implode('/', $url);
             if (in_array($url, array_keys($this->routes))) {
                 foreach($this->routes as $key => $row){
                     if($key == $url){

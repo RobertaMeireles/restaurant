@@ -35,10 +35,15 @@ class Database
     public function query($sql, $table, $fields = null, $values = null) {
        $this->conn = $this->connect();
        $stmt = $this->conn->prepare($sql);
-       if ($fields || $values ) {
+       if ($fields && $values ) {
             $stmt->bindParam(1, $table,  PDO::PARAM_STR);
             $stmt->bindParam(2, $fields, PDO::PARAM_STR);
             $stmt->bindParam(3, $values, PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt;
+        } elseif ($fields) {
+            $stmt->bindParam(1, $table,  PDO::PARAM_STR);
+            $stmt->bindParam(2, $fields, PDO::PARAM_STR);
             $stmt->execute();
             return $stmt;
         } else {
@@ -59,8 +64,8 @@ class Database
     /*
     * Get value by id in database
     */
-    public function getById($table, $fieldsAsString, $values) {
-        $stmt = $this->query("call get_where_data (?,?,?)", $table, $fieldsAsString, $values);
+    public function getById($table, $fieldsAsString, $where) {
+        $stmt = $this->query("call get_where_data (?,?,?)", $table, $fieldsAsString, $where);
         return $stmt->fetch();
     }
 
@@ -78,4 +83,18 @@ class Database
            'lastInsertId' => $this->conn->lastInsertId()
        ];
    }
+
+    /*
+    * Update value in database
+    */
+    public function update($table, $data, $where) {
+        return $this->query("call update_data (?,?,?)", $table, $data, $where);
+    }
+
+    /*
+    * Delete value in database
+    */
+    public function delete($table, $where) {
+        return $this->query("call delete_data (?,?)", $table, $where);
+    }
 }

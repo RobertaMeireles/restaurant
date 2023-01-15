@@ -17,8 +17,8 @@ class Categories extends Database {
     /*
     * List category by ID
     */
-    public function getByIdCategories( $value ) {
-        return $this->getById($this->table, '*', 'id =' . $value);
+    public function getByIdCategories( $where ) {
+        return $this->getById($this->table, '*', 'id =' . $where);
     }
 
     /*
@@ -31,7 +31,31 @@ class Categories extends Database {
         return $result['stmt']->rowCount() > 0;
     }
 
+    /*
+    * Update category 
+    */
+    public function updateCategory($data, $where) {
+        $str = '';
+        $i = 0;
+        $len = count($data);
+        foreach ($data as $key => $value) {
+            if ($len == 1 || $i == $len - 1) {
+                $str .= $key . " = " . '"' . $value . '"' ;
+            } else {
+                $str .= $key . " = " . '"' . $value . '"'. ",";
+            }
+            $i++;
+        }    
+        $result = $this->update($this->table, $str, 'id = ' . $where);
+        return $result->rowCount() > 0;
+    }
 
-
+    /*
+    * Delete category
+    */
+    public function deleteCategory($where) {
+        $result = $this->delete($this->table, "id = $where");
+        return $result->rowCount() > 0;
+    }
 
 }
