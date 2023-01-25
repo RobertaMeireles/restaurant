@@ -36,8 +36,7 @@ class CategoriesController {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = json_decode(file_get_contents('php://input'));
             if($data->name != null || $data->name != '') {
-                $name = $data->name;
-                $resp = $this->categories->createCategory($name);
+                $resp = $this->categories->createCategory($data);
                 if (!$resp) {
                     $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
                 } else {

@@ -7,11 +7,19 @@ CREATE TABLE `categories` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
+CREATE TABLE `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
-DROP PROCEDURE IF EXISTS `include_data`;
+DROP PROCEDURE IF EXISTS `insert_data`;
 DELIMITER //
-CREATE PROCEDURE `include_data`(
+CREATE PROCEDURE `insert_data`(
 		  IN v_table                 VARCHAR(255)
 		, IN v_fields                VARCHAR(255)
         , IN v_value                 VARCHAR(255)
@@ -19,14 +27,12 @@ CREATE PROCEDURE `include_data`(
 BEGIN
 	 declare queryString VARCHAR(255);
      
-	SET @queryString = (SELECT CONCAT( 'INSERT INTO ', v_table , '(' , '`', v_fields, '`', ')', 'VALUES ',  '(' , " ' " , v_value , " ' " , ')'));
+	SET @queryString = (SELECT CONCAT( 'INSERT INTO ', v_table , '(' , v_fields, ')', 'VALUES ',  '(' , v_value , ')'));
 
 	PREPARE myQuery FROM @queryString;
 	EXECUTE myQuery;
     DEALLOCATE PREPARE myQuery;
-END;
-;;
-
+END
 
 
 DROP PROCEDURE IF EXISTS `get_data`;

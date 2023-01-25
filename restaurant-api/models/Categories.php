@@ -24,10 +24,22 @@ class Categories extends Database {
     /*
     * Add new category 
     */
-    public function createCategory($name) {
-        $result = $this->insert($this->table, [
-            'name' => $name,
-        ]);
+    public function createCategory($data) {
+        $arrayData = (array) $data;
+        $fields = array_keys($arrayData);
+        $fieldsAsString = implode(", ", $fields);
+        $valuesString = '';
+        $i = 0;
+        $len = count($arrayData);
+        foreach ($arrayData as $value) {
+            if ($len == 1 || $i == $len - 1) {
+                $valuesString .= '"' . $value . '"';
+            } else {
+                $valuesString .= '"' . $value . '"' . ",";
+            }
+            $i++;
+        }    
+        $result = $this->insert($this->table, $fieldsAsString, $valuesString);
         return $result['stmt']->rowCount() > 0;
     }
 

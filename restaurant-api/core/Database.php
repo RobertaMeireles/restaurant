@@ -32,18 +32,18 @@ class Database
     /*
     * Send query to database
     */
-    public function query($sql, $table, $fields = null, $values = null) {
+    public function query($sql, $table, $firstParameter= null, $secondParameter = null) {
        $this->conn = $this->connect();
        $stmt = $this->conn->prepare($sql);
-       if ($fields && $values ) {
+       if ($firstParameter && $secondParameter ) {
             $stmt->bindParam(1, $table,  PDO::PARAM_STR);
-            $stmt->bindParam(2, $fields, PDO::PARAM_STR);
-            $stmt->bindParam(3, $values, PDO::PARAM_STR);
+            $stmt->bindParam(2, $firstParameter, PDO::PARAM_STR);
+            $stmt->bindParam(3, $secondParameter, PDO::PARAM_STR);
             $stmt->execute();
             return $stmt;
-        } elseif ($fields) {
+        } elseif ($firstParameter) {
             $stmt->bindParam(1, $table,  PDO::PARAM_STR);
-            $stmt->bindParam(2, $fields, PDO::PARAM_STR);
+            $stmt->bindParam(2, $firstParameter, PDO::PARAM_STR);
             $stmt->execute();
             return $stmt;
         } else {
@@ -72,17 +72,13 @@ class Database
     /*
     * Insert value in database
     */
-    public function insert($table, $data) {
-       $fields = array_keys($data);
-       $values = array_values($data);
-       $fieldsAsString = implode(', ', $fields);
-       $valuesAsString = implode(", ", $values);
-       $stmt = $this->query("call include_data (?,?,?)", $table, $fieldsAsString, $valuesAsString);
+    public function insert($table, $fieldsAsString, $valuesString) {
+       $stmt = $this->query('call insert_data (?,?,?)', $table, $fieldsAsString, $valuesString);
        return [
            'stmt' => $stmt,
            'lastInsertId' => $this->conn->lastInsertId()
        ];
-   }
+    }
 
     /*
     * Update value in database
