@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'host' => 'localhost',
-    'user' => 'root',
-    'pass' => 'root',
-    'name' => 'api-restaurant',
-    'port' => 3306
+    'host' =>  getenv('HOST'),
+    'user' =>  getenv('USER_DATABASE'),
+    'pass' =>  getenv('PASS_DATABASE'),
+    'name' =>  getenv('NAME_DATABASE'),
+    'port' =>  getenv('PORT_DATABASE')
 ];
 

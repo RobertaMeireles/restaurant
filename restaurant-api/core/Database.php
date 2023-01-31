@@ -32,7 +32,7 @@ class Database
     /*
     * Send query to database
     */
-    public function query($sql, $table, $firstParameter= null, $secondParameter = null) {
+    public function query($sql, $table = null, $firstParameter= null, $secondParameter = null) {
        $this->conn = $this->connect();
        $stmt = $this->conn->prepare($sql);
        if ($firstParameter && $secondParameter ) {
@@ -59,6 +59,14 @@ class Database
     public function getAll($table) {
         $stmt = $this->query("call get_data (?)", $table);
         return $stmt->fetchAll();
+    }
+
+    /*
+    * Get value by UserName in database
+    */
+    public function getUserByUserName($table, $where) {
+        $stmt = $this->query("call get_user (?,?)", $table, $where);
+        return $stmt->fetch();
     }
 
     /*

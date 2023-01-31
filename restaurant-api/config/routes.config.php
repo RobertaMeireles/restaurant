@@ -1,7 +1,7 @@
 <?php
 
 return [
-    '/'                     => ['controller' => 'CategoriesController', 'action' => 'list'],
+    '/'                     => ['controller' => 'AuthController', 'action' => 'login'],
     'categories'            => ['controller' => 'CategoriesController', 'action' => 'list'],
     'categories/add'       => ['controller' => 'CategoriesController', 'action' => 'add'],
     'categories/update'     => ['controller' => 'CategoriesController', 'action' => 'update'],

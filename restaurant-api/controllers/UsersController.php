@@ -1,11 +1,12 @@
 <?php
 
+use core\SecuredController;
 use models\Users;
 
-class UsersController {
+class UsersController extends SecuredController {
 
-    private $users;
-    private $value;
+    public $users;
+    public $value;
 
     public function __construct($ulrParameter) {
         $this->value = $ulrParameter;
@@ -17,12 +18,16 @@ class UsersController {
     */
     public function list() {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
-            if ( $this->value ) {
-                $response = $this->users->getByIUsers($this->value);
-                echo json_encode($response);
-            }else {
-                $response = $this->users->getAllUsers();
-                echo json_encode($response);
+            $user = $this->userIsAuthenticated();
+            if ($user['type'] == 'adm') {
+                if ( $this->value ) {
+                    $response = json_encode(['status' => 1, 'message' => $this->users->getUser($this->value)]);
+                }else {
+                    $response = json_encode(['status' => 1, 'message' => $this->users->getAllUsers()]);
+                }
+                echo $response;
+            } else {
+                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
             }
         } else {
             echo json_encode('Incorrect execution');
@@ -34,23 +39,28 @@ class UsersController {
     */
     public function add() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $data = json_decode(file_get_contents('php://input'));
-            if($data->name != null || $data->name != '' || 
-              $data->username != null || $data->username != '' || 
-              $data->password != null || $data->password != '' || 
-              $data->type != null || $data->type != '') {
-                $data->password = hash('sha256',$data->password);
-                $resp = $this->users->createUser($data);
-                if (!$resp) {
-                    $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
-                } else {
-                    $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+            $user = $this->userIsAuthenticated();
+            if ($user['type'] == 'adm') {
+                $data = json_decode(file_get_contents('php://input'));
+                if($data->name != null || $data->name != '' || 
+                  $data->username != null || $data->username != '' || 
+                  $data->password != null || $data->password != '' || 
+                  $data->type != null || $data->type != '') {
+                    $data->password = hash('sha256',$data->password);
+                    $resp = $this->users->createUser($data);
+                    if (!$resp) {
+                        $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
+                    } else {
+                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+                    }
                 }
+                else {
+                    $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
+                }
+                echo $response;
+            } else {
+                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
             }
-            else {
-                $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
-            }
-            echo $response;
         } else {
             echo json_encode('Incorrect execution');
         }
@@ -61,22 +71,26 @@ class UsersController {
     */
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-            $data = json_decode(file_get_contents('php://input'),true);
-            if($data != null || $data != '') {
-                if($data['password'] != null) {
-                    $data['password'] = hash('sha256', $data['password']);
-                }
-                $resp = $this->users->updateUser($data, $this->value);
-                if (!$resp) {
-                    $response = json_encode(['status' => 1, 'message' => 'Record updated successfully.']);
+            $user = $this->userIsAuthenticated();
+            if ($user['type'] == 'adm') { 
+                $data = json_decode(file_get_contents('php://input'),true);
+                if($data != null || $data != '') {
+                    if($data['password'] != null) {
+                        $data['password'] = hash('sha256', $data['password']);
+                    }
+                    $resp = $this->users->updateUser($data, $this->value);
+                    if (!$resp) {
+                        $response = json_encode(['status' => 1, 'message' => 'Record updated successfully.']);
+                    } else {
+                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+                    }
                 } else {
-                    $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+                    $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
                 }
+                echo $response;
+            } else {
+                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
             }
-            else {
-                $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
-            }
-            echo $response;
         } else {
             echo json_encode('Incorrect execution');
         }
@@ -87,18 +101,22 @@ class UsersController {
     */
     public function delete() {
         if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
-            if($this->value != null || $this->value != '') {
-                $resp = $this->users->deleteUser($this->value);
-                if (!$resp) {
-                    $response = json_encode(['status' => 1, 'message' => 'Record deleted successfully.']);
+            $user = $this->userIsAuthenticated();
+            if ($user['type'] == 'adm') { 
+                if($this->value != null || $this->value != '') {
+                    $resp = $this->users->deleteUser($this->value);
+                    if (!$resp) {
+                        $response = json_encode(['status' => 1, 'message' => 'Record deleted successfully.']);
+                    } else {
+                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+                    }
                 } else {
-                    $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+                    $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
                 }
+                echo $response;
+            } else {
+                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
             }
-            else {
-                $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
-            }
-            echo $response;
         } else {
             echo json_encode('Incorrect execution');
         }

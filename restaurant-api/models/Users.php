@@ -5,7 +5,6 @@ namespace models;
 use core\Database;
 
 class Users extends Database {
-
     private $table = 'users';
 
     /*
@@ -18,8 +17,12 @@ class Users extends Database {
     /*
     * List user by ID
     */
-    public function getByIUsers( $where ) {
-        return $this->getById($this->table, '*', 'id =' . $where);
+    public function getUser( $where, $column = false ) {
+        if ($column) {
+            return $this->getUserByUserName($this->table, $where);
+        } else {
+            return $this->getById($this->table, '*', 'id =' . $where);
+        }
     }
 
     /*
