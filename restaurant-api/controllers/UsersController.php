@@ -21,9 +21,9 @@ class UsersController extends SecuredController {
             $user = $this->userIsAuthenticated();
             if ($user['type'] == 'adm') {
                 if ( $this->value ) {
-                    $response = json_encode(['status' => 1, 'message' => $this->users->getUser($this->value)]);
+                    $response = json_encode(['status' => 1, 'message' => $this->users->getUser($this->value)], JSON_UNESCAPED_UNICODE);
                 }else {
-                    $response = json_encode(['status' => 1, 'message' => $this->users->getAllUsers()]);
+                    $response = json_encode(['status' => 1, 'message' => $this->users->getAllUsers()] , JSON_UNESCAPED_UNICODE);
                 }
                 echo $response;
             } else {

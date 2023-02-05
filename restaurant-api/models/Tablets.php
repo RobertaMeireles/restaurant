@@ -4,32 +4,27 @@ namespace models;
 
 use core\Database;
 
-class Users extends Database {
-    private $table = 'users';
+class Tablets extends Database {
+    private $table = 'tablets';
 
     /*
-    * List all users 
+    * List all categories 
     */
-    public function getAllUsers() {
+    public function getAllTablet() {
         return $this->getAll($this->table);
     }
 
     /*
-    * List user by ID
+    * List category by ID
     */
-    public function getUser( $where, $column = false ) {
-        if ($column) {
-            return $this->getUserByUserName($this->table, $where);
-        } else {
-            return $this->getById($this->table, '*', 'id =' . $where);
-            
-        }
+    public function getByIdTablet( $where ) {
+        return $this->getById($this->table, '*', 'id =' . $where);
     }
 
     /*
-    * Add new user 
+    * Add new category 
     */
-    public function createUser($data) {
+    public function createTablet($data) {
         $arrayData = (array) $data;
         $fields = array_keys($arrayData);
         $fieldsAsString = implode(", ", $fields);
@@ -46,13 +41,12 @@ class Users extends Database {
         }    
         $result = $this->insert($this->table, $fieldsAsString, $valuesString);
         return $result['stmt']->rowCount() > 0;
-
     }
 
     /*
-    * Update user 
+    * Update category 
     */
-    public function updateUser($data, $where) {
+    public function updateTablet($data, $where) {
         $str = '';
         $i = 0;
         $len = count($data);
@@ -69,9 +63,9 @@ class Users extends Database {
     }
 
     /*
-    * Delete user
+    * Delete category
     */
-    public function deleteUser($where) {
+    public function deleteTablet($where) {
         $result = $this->delete($this->table, "id = $where");
         return $result->rowCount() > 0;
     }

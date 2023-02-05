@@ -37,7 +37,7 @@ class AuthController {
         $header = json_encode($header);
         $header = base64_encode($header);
         $payload = [
-            'username' => $user->userName,
+            'username' => $user->username,
             'exp' => $duration,
         ];
 

@@ -32,7 +32,7 @@ class Application
     * Run controller
     */
     private function run($route, $parameter) {
-        $controller = $route['controller'];;
+        $controller = $route['controller'];
         $action = $route['action'];
         $controllerPath = "../controllers/$controller.php";
         if (file_exists($controllerPath)) {

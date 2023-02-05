@@ -22,9 +22,9 @@ class CategoriesController extends SecuredController {
             $user = $this->userIsAuthenticated();
             if ($user['type'] == 'adm') {
                 if ( $this->value ) {
-                    $response = json_encode(['status' => 1, 'message' => $this->categories->getByIdCategories($this->value)]);
+                    $response = json_encode(['status' => 1, 'message' => $this->categories->getByIdCategories($this->value)] , JSON_UNESCAPED_UNICODE);
                 } else {
-                    $response = json_encode(['status' => 1, 'message' => $this->categories->getAllCategories()]);
+                    $response = json_encode(['status' => 1, 'message' => $this->categories->getAllCategories()] , JSON_UNESCAPED_UNICODE);
                 }
                 echo $response;
             } else {

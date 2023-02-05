@@ -43,8 +43,8 @@ class SecuredController {
     public function userIsAuthenticated() {
         $username = $this->checkToken();
         if($username) {
-            $user = $this->users->getUser($username->name, 'username');
-            if ($user) {
+            $user = $this->users->getUser($username->username, 'username');
+            if (!empty($user)) {
                 return [
                     'id' => $user->id,
                     'type' => $user->type
