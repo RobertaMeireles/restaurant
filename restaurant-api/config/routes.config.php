@@ -22,6 +22,10 @@ return [
     'recipes/add'           => ['controller' => 'RecipesController', 'action' => 'add'],
     'recipes/update'        => ['controller' => 'RecipesController', 'action' => 'update'],
     'recipes/delete'        => ['controller' => 'RecipesController', 'action' => 'delete'],
+    'orders'                => ['controller' => 'OrdersController', 'action' => 'list'],
+    'orders/add'            => ['controller' => 'OrdersController', 'action' => 'add'],
+    'orders/update'         => ['controller' => 'OrdersController', 'action' => 'update'],
+    'orders/delete'         => ['controller' => 'OrdersController', 'action' => 'delete'],
 ];
 
 

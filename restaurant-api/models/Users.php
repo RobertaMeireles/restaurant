@@ -44,8 +44,16 @@ class Users extends Database {
             }
             $i++;
         }    
-        $result = $this->insert($this->table, $fieldsAsString, $valuesString);
-        return $result['stmt']->rowCount() > 0;
+        $result = (array) $this->insert($this->table, $fieldsAsString, $valuesString);
+        if ($result) {
+            return [
+                'msg' =>  isset($result['message']) ? $result['message'] : false,
+                'lastInsertId' =>  isset($result['last_id']) ? $result['last_id'] : false
+            ];
+        } else {
+            echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
+            die();
+        }
 
     }
 
@@ -64,16 +72,30 @@ class Users extends Database {
             }
             $i++;
         }    
-        $result = $this->update($this->table, $str, 'id = ' . $where);
-        return $result->rowCount() > 0;
+        $result = (array) $this->update($this->table, $str, 'id = ' . $where);
+        if ($result) {
+            return [
+                'msg' =>  isset($result['message']) ? $result['message'] : false,
+            ];
+        } else {
+            echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
+            die();
+        }
     }
 
     /*
     * Delete user
     */
     public function deleteUser($where) {
-        $result = $this->delete($this->table, "id = $where");
-        return $result->rowCount() > 0;
+        $result = (array) $this->delete($this->table, "id = $where");
+        if ($result) {
+            return [
+                'msg' =>  isset($result['message']) ? $result['message'] : false,
+            ];
+        } else {
+            echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
+            die();
+        }
     }
 
 }

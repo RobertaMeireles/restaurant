@@ -22,10 +22,7 @@ class Database
             \PDO::ATTR_ERRMODE            => \PDO::ERRMODE_EXCEPTION,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
             \PDO::ATTR_EMULATE_PREPARES   => false,
-        ];
-
-        // SET CHA
-        
+        ];        
        try {
             $this->conn = new PDO($dsn, $user, $pass, $options);
             return $this->conn;
@@ -114,23 +111,22 @@ class Database
     */
     public function insert($table, $fieldsAsString, $valuesString) {
        $stmt = $this->query('call insert_data (?,?,?)', $table, $fieldsAsString, $valuesString);
-       return [
-           'stmt' => $stmt,
-           'lastInsertId' => $this->conn->lastInsertId()
-       ];
+       return  $stmt->fetch();
     }
 
     /*
     * Update value in database
     */
     public function update($table, $data, $where) {
-        return $this->query("call update_data (?,?,?)", $table, $data, $where);
+        $stmt = $this->query("call update_data (?,?,?)", $table, $data, $where);
+        return  $stmt->fetch();
     }
 
     /*
     * Delete value in database
     */
     public function delete($table, $where) {
-        return $this->query("call delete_data (?,?)", $table, $where);
+        $stmt = $this->query("call delete_data (?,?)", $table, $where);
+        return  $stmt->fetch();
     }
 }

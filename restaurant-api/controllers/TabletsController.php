@@ -45,7 +45,7 @@ class TabletsController extends SecuredController {
                 $data = json_decode(file_get_contents('php://input'));
                 if($data->restaurantId != null || $data->restaurantId != '') {
                     $resp = $this->tablets->createTablet($data);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
@@ -73,7 +73,7 @@ class TabletsController extends SecuredController {
                 $data = json_decode(file_get_contents('php://input'),true);
                 if($data != null || $data != '') {
                     $resp = $this->tablets->updateTablet($data, $this->value);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record updated successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
@@ -99,7 +99,7 @@ class TabletsController extends SecuredController {
             if ($user['type'] == 'adm') { 
                 if($this->value != null || $this->value != '') {
                     $resp = $this->tablets->deleteTablet($this->value);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record deleted successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);

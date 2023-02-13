@@ -48,7 +48,7 @@ class UsersController extends SecuredController {
                   $data->type != null || $data->type != '') {
                     $data->password = hash('sha256',$data->password);
                     $resp = $this->users->createUser($data);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
@@ -79,7 +79,7 @@ class UsersController extends SecuredController {
                         $data['password'] = hash('sha256', $data['password']);
                     }
                     $resp = $this->users->updateUser($data, $this->value);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record updated successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
@@ -105,7 +105,7 @@ class UsersController extends SecuredController {
             if ($user['type'] == 'adm') { 
                 if($this->value != null || $this->value != '') {
                     $resp = $this->users->deleteUser($this->value);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record deleted successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);

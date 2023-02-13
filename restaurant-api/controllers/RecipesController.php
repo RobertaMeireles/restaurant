@@ -50,7 +50,7 @@ class RecipesController extends SecuredController
                   $data->price != null || $data->price != ''||
                   $data->ingredients != null || $data->ingredients != '') {
                     $resp = $this->recipes->createRecipe($data);
-                    if (!$resp) {
+                    if ($resp) {
                         $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
@@ -104,7 +104,7 @@ class RecipesController extends SecuredController
             if ($user['type'] == 'adm') { 
                 if($this->value != null || $this->value != '') {
                     $resp = $this->recipes->deleteRecipeAndIngredients($this->value);
-                    if (!$resp) {
+                    if ($resp) {
                         $response = json_encode(['status' => 1, 'message' => 'Record deleted successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);

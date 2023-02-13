@@ -49,7 +49,6 @@ CREATE TABLE `recipes` (
   FOREIGN KEY (categoryId) REFERENCES categories(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
 CREATE TABLE `recipes-ingredients` (
   `id` int NOT NULL AUTO_INCREMENT,
   `recipeId` INT COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -60,6 +59,25 @@ CREATE TABLE `recipes-ingredients` (
   FOREIGN KEY (ingredientId) REFERENCES ingredients (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE table `orders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tabletId` int,
+  `status` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `date` DATETIME COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`tabletId`) REFERENCES tablets (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `recipes-orders` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `orderId` INT COLLATE  utf8mb4_unicode_ci NOT NULL,
+  `recipeId` INT COLLATE utf8mb4_unicode_ci NOT NULL,
+  `quantity` FLOAT COLLATE utf8mb4_unicode_ci NOT NULL,
+  `price` FLOAT COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (orderId) REFERENCES `orders`(id),
+  FOREIGN KEY (recipeId) REFERENCES `recipes`(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 DROP PROCEDURE IF EXISTS `insert_data`;
@@ -178,5 +196,5 @@ VIEW `fullrecipes` AS
     FROM
         (((`recipes` `r`
         LEFT JOIN `categories` `c` ON ((`r`.`categoryId` = `c`.`id`)))
-        LEFT JOIN `recipes-ingredients` `ri` ON ((`ri`.`recipeId` = `r`.`id`)))
+        LEFT JOIN `recipesIngredients` `ri` ON ((`ri`.`recipeId` = `r`.`id`)))
         LEFT JOIN `ingredients` `i` ON ((`ri`.`ingredientId` = `i`.`id`)))

@@ -45,7 +45,7 @@ class IngredientsController extends SecuredController {
                 if($data->name != null || $data->name != '' ||
                     $data->unity != null || $data->unity != '') {
                     $resp = $this->ingredients->createIngredient($data);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
@@ -73,7 +73,7 @@ class IngredientsController extends SecuredController {
                 $data = json_decode(file_get_contents('php://input'),true);
                 if($data != null || $data != '') {
                     $resp = $this->ingredients->updateIngredient($data, $this->value);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record updated successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
@@ -99,7 +99,7 @@ class IngredientsController extends SecuredController {
             if ($user['type'] == 'adm') { 
                 if($this->value != null || $this->value != '') {
                     $resp = $this->ingredients->deleteIngredient($this->value);
-                    if (!$resp) {
+                    if ($resp['msg']) {
                         $response = json_encode(['status' => 1, 'message' => 'Record deleted successfully.']);
                     } else {
                         $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
