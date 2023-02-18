@@ -19,16 +19,15 @@ class RecipesController extends SecuredController
     */
     public function list() {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
-            $user = $this->userIsAuthenticated();
-            if ($user['type'] == 'adm') {
-                if ( $this->value ) {
-                    $response = json_encode(['status' => 1, 'message' => $this->recipes->getRecipe($this->value)], JSON_UNESCAPED_UNICODE);
-                }else {
-                    $response = json_encode(['status' => 1, 'message' => $this->recipes->getAllRecipes()], JSON_UNESCAPED_UNICODE);
-                }
-                echo $response;
+            if ( $this->value ) {
+                $response = json_encode(['status' => 1, 'message' => $this->recipes->getRecipeById($this->value)], JSON_UNESCAPED_UNICODE);
+            }else {
+                $response = json_encode(['status' => 1, 'message' => $this->recipes->getAllRecipes()], JSON_UNESCAPED_UNICODE);
+            }
+            if (empty($response) ) {
+                echo json_encode('Recipe not found.');
             } else {
-                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
+                echo $response;
             }
         } else {
             echo json_encode('Incorrect execution');

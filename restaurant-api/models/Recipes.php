@@ -12,14 +12,16 @@ class Recipes extends Database {
     * List all Recipes 
     */
     public function getAllRecipes() {
-        return $this->queryFullRecipe();
+       // return $this->queryFullRecipe();
+        return $this->queryGetView('fullrecipes');
     }
 
     /*
     * List recipe by ID
     */
-    public function getRecipe( $where ) {
-        return $this->queryFullRecipe($where);
+    public function getRecipeById( $where ) {
+        // return $this->queryFullRecipe($where);
+        return $this->queryGetView('fullrecipes', 'recipeId = ' . $where);
     }
 
     /*
@@ -40,32 +42,32 @@ class Recipes extends Database {
     /*
     * Update new line recipe-Ingredients
     */
-    public function updateRecipeIngredients($data, $recipeIdToUpdate) {
-        if($recipeIdToUpdate) {
-            $valuesString = $recipeIdToUpdate . ' , ' . $data[0]['id'] . ' , ' . $data[0]['quantity'] ;
-            $result = $this->insert($this->tableRecipesIngredients, "recipeId, ingredientId, quantity", $valuesString );
-            if ($result) {
-                return [
-                    'msg' =>  isset($result['message']) ? $result['message'] : false,
-                ];
-            } else {
-                echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
-                die();
-            }
-        } else {
-            $lastRecipeId = $this->queryGetLastId($this->tableRecipes);
-            if(!empty($lastRecipeId)) {
-                foreach ($data as $value) {
-                    $valuesString = $lastRecipeId . ' , ' . $value->id . ' , ' . $value->quantity ;
-                    return $this->insert($this->tableRecipesIngredients, "recipeId, ingredientId, quantity", $valuesString );
-                }
+    // public function updateRecipeIngredients($data, $recipeIdToUpdate) {
+    //     if($recipeIdToUpdate) {
+    //         $valuesString = $recipeIdToUpdate . ' , ' . $data[0]['id'] . ' , ' . $data[0]['quantity'] ;
+    //         $result = $this->insert($this->tableRecipesIngredients, "recipeId, ingredientId, quantity", $valuesString );
+    //         if ($result) {
+    //             return [
+    //                 'msg' =>  isset($result['message']) ? $result['message'] : false,
+    //             ];
+    //         } else {
+    //             echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
+    //             die();
+    //         }
+    //     } else {
+    //         $lastRecipeId = $this->queryGetLastId($this->tableRecipes);
+    //         if(!empty($lastRecipeId)) {
+    //             foreach ($data as $value) {
+    //                 $valuesString = $lastRecipeId . ' , ' . $value->id . ' , ' . $value->quantity ;
+    //                 return $this->insert($this->tableRecipesIngredients, "recipeId, ingredientId, quantity", $valuesString );
+    //             }
                 
-            } else {
-                echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
-                die();
-            }
-        }
-    }
+    //         } else {
+    //             echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
+    //             die();
+    //         }
+    //     }
+    // }
 
     /*
     * Add new recipe 
@@ -111,7 +113,7 @@ class Recipes extends Database {
     * Update recipe 
     */
     public function updateRecipes($data, $where) {
-        if($this->getRecipe($where)) {
+        if($this->getRecipeById($where)) {
             $auxArray = [];
             if(!empty($data['ingredients'])) {
                 $auxArray = $data;

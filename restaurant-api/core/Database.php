@@ -49,9 +49,35 @@ class Database
     public function queryFullRecipe($id = null) {
         $this->conn = $this->connect();
         if($id) {
-            $sql = "SELECT * FROM fullRecipes WHERE recipeId = $id;";
+            $sql = "SELECT * FROM fullrecipes WHERE recipeId = $id;";
         } else {
-            $sql = "SELECT * FROM fullRecipes;";
+            $sql = "SELECT * FROM fullrecipes;";
+        }
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    // public function queryFullOrders($id = null) {
+    //     $this->conn = $this->connect();
+    //     if($id) {
+    //         $sql = "SELECT * FROM fullorders WHERE orderId = $id;";
+    //     } else {
+    //         $sql = "SELECT * FROM fullorders;";
+    //     }
+    //     $stmt = $this->conn->prepare($sql);
+    //     $stmt->execute();
+    //     return $stmt->fetchAll();
+    // }
+
+    public function queryGetView($view, $where = null) {
+        // var_dump($where);
+        // die();
+        $this->conn = $this->connect();
+        if($where) {
+            $sql = "SELECT * FROM $view WHERE $where;";
+        } else {
+            $sql = "SELECT * FROM $view;";
         }
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();

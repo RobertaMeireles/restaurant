@@ -3,7 +3,7 @@
 use core\SecuredController;
 use models\Orders;
 
-class OrderController extends SecuredController {
+class OrdersController extends SecuredController {
 
     public $orders;
     public $value;
@@ -14,21 +14,21 @@ class OrderController extends SecuredController {
         $this->orders = new Orders();
     }
 
-        /*
-    * List Recipes
+    /*
+    * List Orders to user
     */
     public function list() {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
-            $user = $this->userIsAuthenticated();
-            if ($user['type'] == 'adm') {
-                if ( $this->value ) {
-                    $response = json_encode(['status' => 1, 'message' => $this->orders->getRecipe($this->value)], JSON_UNESCAPED_UNICODE);
-                }else {
-                    $response = json_encode(['status' => 1, 'message' => $this->orders->getAllRecipes()], JSON_UNESCAPED_UNICODE);
-                }
-                echo $response;
+            if ( $this->value ) {
+                $response = json_encode(['status' => 1, 'message' => $this->orders->getOrderById($this->value)], JSON_UNESCAPED_UNICODE);
+            }else {
+                echo json_encode('Incorrect execution');
+                die();
+            }
+            if (empty($response) ) {
+                echo json_encode('Order not found.');
             } else {
-                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
+                echo $response;
             }
         } else {
             echo json_encode('Incorrect execution');
@@ -36,89 +36,80 @@ class OrderController extends SecuredController {
     }
 
     /*
-    * Add new Recipe 
+    * List Orders
+    */
+    public function listCompanyOrders() {
+        $user = $this->userIsAuthenticated();
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
+            if( $user['type'] == 'adm' || $user['type'] == 'user') {
+                if ( $this->value) {
+                    $response = json_encode(['status' => 1, 'message' => $this->orders->getOrderById($this->value)], JSON_UNESCAPED_UNICODE);
+                }else {
+                    $response = json_encode(['status' => 1, 'message' => $this->orders->getAllOrders()], JSON_UNESCAPED_UNICODE);
+                }
+            }else {
+                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
+                die();
+            }
+            if (empty($response) ) {
+                echo json_encode('Order not found.');
+            } else {
+                echo $response;
+            }
+        } else {
+            echo json_encode('Incorrect execution');
+        }
+    }
+    
+
+    /*
+    * Add new Order 
     */
     public function add() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $user = $this->userIsAuthenticated();
-            if ($user['type'] == 'adm') {
-                $data = json_decode(file_get_contents('php://input'));
-                if($data->name != null || $data->name != '' || 
-                  $data->description != null || $data->description != '' || 
-                  $data->password != null || $data->password != '' || 
-                  $data->categoryId != null || $data->categoryId != '' ||
-                  $data->price != null || $data->price != ''||
-                  $data->ingredients != null || $data->ingredients != '') {
-                    $resp = $this->orders->createRecipe($data);
-                    if (!$resp) {
-                        $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
-                    } else {
-                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
-                    }
-                }
-                else {
-                    $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
-                }
-                echo $response;
-            } else {
-                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
-            }
-        } else {
-            echo json_encode('Incorrect execution');
-        }
-    }
-
-    /*
-    * Update Recipe 
-    */
-    public function update() {
-        if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
-            $user = $this->userIsAuthenticated();
-            if ($user['type'] == 'adm') { 
-                $data = json_decode(file_get_contents('php://input'),true);
-                if($data != null || $data != '') {
-                    $resp = $this->orders->updateRecipes($data, $this->value);
-                    if ($resp) {
-                        $response = json_encode(['status' => 1, 'message' => 'Record updated successfully.']);
-                    } else {
-                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
-                    }
+            $data = json_decode(file_get_contents('php://input'));
+            if($data->tabletId != null || $data->tabletId != '' || 
+                $data->recipes != null || $data->recipes != '') {
+                $resp = $this->orders->createOrder($data);
+                if ($resp) {
+                    $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
                 } else {
-                    $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
+                    $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
                 }
-                echo $response;
-            } else {
-                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
             }
+            else {
+                $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
+            }
+            echo $response;
         } else {
             echo json_encode('Incorrect execution');
         }
     }
 
     /*
-    * Delete Recipe 
+    * Delete Order 
     */
     public function delete() {
-        if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
-            $user = $this->userIsAuthenticated();
-            if ($user['type'] == 'adm') { 
-                if($this->value != null || $this->value != '') {
-                    $resp = $this->orders->deleteRecipeAndIngredients($this->value);
-                    if (!$resp) {
-                        $response = json_encode(['status' => 1, 'message' => 'Record deleted successfully.']);
-                    } else {
-                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
-                    }
+    if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+        $user = $this->userIsAuthenticated();
+        if ($user['type'] == 'adm') { 
+            if($this->value != null || $this->value != '') {
+                $resp = $this->orders->deleteRecipeAndOrders($this->value);
+                if ($resp) {
+                    $response = json_encode(['status' => 1, 'message' => 'Record deleted successfully.']);
                 } else {
-                    $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
+                    $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
                 }
-                echo $response;
             } else {
-                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
+                $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
             }
+            echo $response;
         } else {
-            echo json_encode('Incorrect execution');
+            echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
         }
+    } else {
+        echo json_encode('Incorrect execution');
     }
+}
 
 }

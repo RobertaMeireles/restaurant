@@ -2,7 +2,8 @@
 
 
 namespace models;
-
+use \Datetime;
+use \DateTimeZone;
 use core\Database;
 
 class Orders extends Database {
@@ -13,52 +14,49 @@ class Orders extends Database {
     /*
     * List all Recipes 
     */
-    public function getAllRecipes() {
-        return $this->queryFullRecipe();
+    public function getAllOrders() {
+        return $this->queryGetView('fullorders');
     }
 
     /*
     * List recipe by ID
     */
-    public function getRecipe( $where ) {
-        return $this->queryFullRecipe($where);
+    public function getOrderById( $where ) {
+        return $this->queryGetView('fullorders' , 'orderId =' . $where);
     }
 
     /*
     * Add new line recipe-Ingredients
     */
-    public function createLineRecipeIngredients($data, $recipeIdToUpdate = null) {
-        if($recipeIdToUpdate) {
-            $valuesString = $recipeIdToUpdate . ' , ' . $data[0]['id'] . ' , ' . $data[0]['quantity'] ;
-            $result = $this->insert($this->tableRecipesOrders, "recipeId, ingredientId, quantity", $valuesString );
-            return $result['stmt']->rowCount() > 0;
-        } else {
-            $lastRecipeId = $this->queryGetLastId($this->tableOrders);
-            if(!empty($lastRecipeId)) {
-                foreach ($data as $value) {
-                    $valuesString = $lastRecipeId . ' , ' . $value->id . ' , ' . $value->quantity ;
-                    return $this->insert($this->tableRecipesOrders, "recipeId, ingredientId, quantity", $valuesString );
-                }
-                
-            } else {
-                echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
-                die();
-            }
+    public function createLineRecipesOrders ($data, $lastOrderId ) {
+        foreach ($data as $value) {
+            $valuesString = $lastOrderId . ' , ' . $value->id . ' , ' . $value->quantity ;
+            $result = (array) $this->insert($this->tableRecipesOrders, "orderId, recipeId, quantity", $valuesString );
+            if ($result["message"] == 0) {
+                return false;
+            } 
         }
+        return true;
     }
 
     /*
     * Add new recipe 
     */
-    public function createRecipe($data) {
-        $recipeData = (array) $data;
-        $ingredients = array_pop($recipeData);
-        $fields = array_keys($recipeData);
+    public function createOrder($data) {
+        $orderData = (array) $data;
+        $date = new DateTime('now', new DateTimeZone('Europe/Lisbon'));
+        $date = $date->format('Y-m-d H:i:s');
+        $orders = array_pop($orderData);
+        $orderData['status'] = 'Elaboração';
+        $orderData['date'] = $date;
+
+        $fields = array_keys($orderData);
         $fieldsAsString = implode(", ", $fields);
+
         $valuesString = '';
         $i = 0;
-        $len = count($recipeData);
-        foreach ($recipeData as $value) {
+        $len = count($orderData);
+        foreach ($orderData as $value) {
             if ($len == 1 || $i == $len - 1) {
                 $valuesString .= '"' . $value . '"';
             } else {
@@ -66,9 +64,21 @@ class Orders extends Database {
             }
             $i++;
         }    
-        $insertRecipe = $this->insert($this->tableOrders, $fieldsAsString, $valuesString);
-        if(!empty($insertRecipe['stmt'])) {
-            $this->createLineRecipeIngredients($ingredients);
+
+        $insertOrder = (array) $this->insert($this->tableOrders, $fieldsAsString, $valuesString);
+        if ($insertOrder) {
+            $returnOrder = [
+                'msg' =>  isset($insertOrder['message']) ? $insertOrder['message'] : false,
+                'lastInsertId' =>  isset($insertOrder['last_id']) ? $insertOrder['last_id'] : false
+            ];
+            $return = $this->createLineRecipesOrders($orders, $returnOrder['lastInsertId']);
+            // if error delete recipe created!
+            if(!$return) {
+                $where = $returnOrder['lastInsertId'];
+                $this->delete($this->tableRecipesOrders, "recipeId = $where");
+                $this->delete($this->tableOrders, "id = $where");
+            } 
+            return $return;
         } else {
             echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
             die();
@@ -76,86 +86,23 @@ class Orders extends Database {
 
     }
 
-    /*
-    * Update recipe 
-    */
-    public function updateRecipes($data, $where) {
-        if($this->getRecipe($where)) {
-            $auxArray = [];
-            if(!empty($data['ingredients'])) {
-                $auxArray = $data;
-                array_pop($data); //removed last item in $data ($data['ingredients']).
-            }
-            $return = false;
-            // update recipes table
-            if (!empty($data['name']) || !empty($data['description']) || !empty($data['categoryId']) || !empty($data['price'])) {
-                $str = '';
-                $i = 0;
-                $len = count($data);
-                foreach ($data as $key => $value) {
-                    if ($len == 1 || $i == $len - 1) {
-                        $str .= $key . " = " . '"' . $value . '"' ;
-                    } else {
-                        $str .= $key . " = " . '"' . $value . '"'. ",";
-                    }
-                    $i++;
-                }    
-                $result = $this->update($this->tableOrders, $str, 'id = ' . $where);
-                if($result) {
-                    $return = true;
-                } 
-            }
-            // update recipe-ingredients table
-            if (!empty($auxArray['ingredients'])) {
-                // Acrescentar um ingrediente: esse item já existe na base de dados? se não, acrescenta o item. 
-                // Deletar um ingrediente: esse item já existe o id na base de dados recipe-ingredients? se sim, a quantidade é igual? se sim deleta o item.
-                // Atualizar a quantidade do ingrediente :esse item já existe id na base de dados recipe-ingredients? se sim, a quantidade é diferente? atualiza a quantidade do item.
-                foreach ($auxArray['ingredients'] as $value) {
-                    $ingredient = $this->getById($this->tableRecipesOrders, '*', 'recipeId = ' . $where . ' and ingredientId = '. $value['id']);
-                    // There is the ingredient in recipe-ingredients?
-                    if($ingredient) {
-                        // delete - Because user passed same value in $data['ingredients']
-                        if ($ingredient->quantity == $value['quantity']) {
-                            $result = $this->deleteRecipeAndIngredients($ingredient->id, $this->tableRecipesOrders);
-                            if( $result == 0 ) {
-                                $return = true;
-                            } 
-                        // update - Because user passed different value in $data['ingredients']
-                        } else {
-                            $result = $this->update($this->tableRecipesOrders, 'quantity = ' . $value['quantity'], 'id = ' . $ingredient->id);
-                            if( $result) {
-                                $return = true;
-                            } 
-                        }
-                    } else {
-                        // Include - Because there is not this ingredient in this recipe
-                        $result = $this->createLineRecipeIngredients($auxArray['ingredients'], $where);
-                        if( $result == 0 ) {
-                            $return = true;
-                        }
-                    }
-                }
-            } 
-            return $return;
-
-        } else {
-            echo json_encode(['status' => 0, 'message' => 'Recipe not found.']);
-            die();
-        }
-    
-    }
 
     /*
     * Delete recipe
     */
-    public function deleteRecipeAndIngredients($where, $table = null) {
+    public function deleteRecipeAndOrders($where, $table = null) {
+        $isSuccess = true;
         if($table) {
-            $result = $this->delete($table, "id = $where");
+            $result = (array) $this->delete($table, "id = $where");
         } else {
-            $result = $this->delete($this->tableRecipesOrders, "recipeId = $where");
-            $result = $this->delete($this->tableOrders, "id = $where");
+            $result = (array) $this->delete($this->tableRecipesOrders, "orderId = $where");
+            $result = (array) $this->delete($this->tableOrders, "id = $where");
         }
-        return $result->rowCount() > 0;
+        if (!$result['message']) {
+            $isSuccess = false;
+        }
+        return $isSuccess;
 
     }
 }
+
