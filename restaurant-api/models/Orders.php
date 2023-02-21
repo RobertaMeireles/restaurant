@@ -86,6 +86,36 @@ class Orders extends Database {
 
     }
 
+    
+    /*
+    * Update ingredient 
+    */
+    public function updateOrder($data, $where) {
+        $str = '';
+        $i = 0;
+        $len = count($data);
+        foreach ($data as $key => $value) {
+            if ($len == 1 || $i == $len - 1) {
+                $str .= $key . " = " . '"' . $value . '"' ;
+            } else {
+                $str .= $key . " = " . '"' . $value . '"'. ",";
+            }
+            $i++;
+        }    
+        $result = (array) $this->update($this->tableOrders, $str, 'id = ' . $where);
+        // var_dump($result);
+        // die();
+        if ($result) {
+            return [
+                'msg' =>  $result['message'] == 1 ? true : false,
+            ];
+        } else {
+            echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
+            die();
+        }
+    }
+
+
 
     /*
     * Delete recipe

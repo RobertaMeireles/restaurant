@@ -60,6 +60,36 @@ class OrdersController extends SecuredController {
             echo json_encode('Incorrect execution');
         }
     }
+
+    /*
+    * Update Order 
+    */
+    public function update() {
+        if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+            $user = $this->userIsAuthenticated();
+            if ($user['type'] == 'adm' || $user['type'] == 'user') { 
+                $data = json_decode(file_get_contents('php://input'),true);
+                if($data['status'] != null || $data['status'] != '' 
+                || $data['status'] == 'Cancelado' 
+                || $data['status'] == 'Entregue' 
+                || $data['status'] == 'Elaboração') {
+                    $resp = $this->orders->updateOrder($data, $this->value);
+                    if ($resp['msg']) {
+                        $response = json_encode(['status' => 1, 'message' => 'Record updated successfully.']);
+                    } else {
+                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+                    }
+                } else {
+                    $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
+                }
+                echo $response;
+            } else {
+                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
+            }
+        } else {
+            echo json_encode('Incorrect execution');
+        }
+    }
     
 
     /*

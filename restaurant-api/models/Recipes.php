@@ -12,7 +12,6 @@ class Recipes extends Database {
     * List all Recipes 
     */
     public function getAllRecipes() {
-       // return $this->queryFullRecipe();
         return $this->queryGetView('fullrecipes');
     }
 
@@ -20,10 +19,16 @@ class Recipes extends Database {
     * List recipe by ID
     */
     public function getRecipeById( $where ) {
-        // return $this->queryFullRecipe($where);
         return $this->queryGetView('fullrecipes', 'recipeId = ' . $where);
     }
 
+
+    /*
+    * List recipe by ID
+    */
+    public function getRecipesByCategory( $where ) {
+        return $this->queryGetView('fullrecipes', 'categoryId = ' . $where);
+    }
     /*
     * Add new line recipe-Ingredients
     */

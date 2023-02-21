@@ -19,12 +19,14 @@ return [
     'ingredients/update'    => ['controller' => 'IngredientsController', 'action' => 'update'],
     'ingredients/delete'    => ['controller' => 'IngredientsController', 'action' => 'delete'],
     'recipes'               => ['controller' => 'RecipesController', 'action' => 'list'],
+    'recipesbycategory'     => ['controller' => 'RecipesController', 'action' => 'recipesbycategory'],
     'recipes/add'           => ['controller' => 'RecipesController', 'action' => 'add'],
     'recipes/update'        => ['controller' => 'RecipesController', 'action' => 'update'],
     'recipes/delete'        => ['controller' => 'RecipesController', 'action' => 'delete'],
     'orders'                => ['controller' => 'OrdersController', 'action' => 'list'],
     'companyorders'         => ['controller' => 'OrdersController', 'action' => 'listCompanyOrders'],
     'orders/add'            => ['controller' => 'OrdersController', 'action' => 'add'],
+    'orders/update'         => ['controller' => 'OrdersController', 'action' => 'update'],
     'orders/delete'         => ['controller' => 'OrdersController', 'action' => 'delete'],
 ];
 

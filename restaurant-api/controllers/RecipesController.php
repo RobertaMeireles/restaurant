@@ -20,12 +20,31 @@ class RecipesController extends SecuredController
     public function list() {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
             if ( $this->value ) {
-                $response = json_encode(['status' => 1, 'message' => $this->recipes->getRecipeById($this->value)], JSON_UNESCAPED_UNICODE);
+                $res = $this->recipes->getRecipeById($this->value);
+                $response = json_encode(['status' => 1, 'message' =>  $res], JSON_UNESCAPED_UNICODE);
             }else {
-                $response = json_encode(['status' => 1, 'message' => $this->recipes->getAllRecipes()], JSON_UNESCAPED_UNICODE);
+                $res =  $this->recipes->getAllRecipes();
+                $response = json_encode(['status' => 1, 'message' => $res], JSON_UNESCAPED_UNICODE);
             }
-            if (empty($response) ) {
-                echo json_encode('Recipe not found.');
+            if (empty($res) ) {
+                echo json_encode(['status' => 0, 'message' => 'Recipe not found.'], JSON_UNESCAPED_UNICODE);
+            } else {
+                echo $response;
+            }
+        } else {
+            echo json_encode('Incorrect execution');
+        }
+    }
+
+    /*
+    * List Recipes by category
+    */
+    public function recipesbycategory(){
+        if ( $this->value ) {
+            $res = $this->recipes->getRecipesByCategory($this->value);
+            $response =  json_encode(['status' => 1, 'message' =>  $res], JSON_UNESCAPED_UNICODE);
+            if (empty($res) ) {
+                echo json_encode(['status' => 0, 'message' => 'There is no recipe for this category.'], JSON_UNESCAPED_UNICODE);
             } else {
                 echo $response;
             }

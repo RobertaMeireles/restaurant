@@ -69,7 +69,7 @@ class Tablets extends Database {
         $result = (array) $this->update($this->table, $str, 'id = ' . $where);
         if ($result) {
             return [
-                'msg' =>  isset($result['message']) ? $result['message'] : false,
+                'msg' =>  $result['message'] == 1 ? true : false,
             ];
         } else {
             echo json_encode(['status' => 0, 'message' => 'Incorrect execution.']);
