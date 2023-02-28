@@ -53,33 +53,88 @@ class RecipesController extends SecuredController
         }
     }
 
-    /*
-    * Add new Recipe 
-    */
+    // /*
+    // * Add new Recipe 
+    // */
+    // public function add() {
+    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    //         $user = $this->userIsAuthenticated();
+    //         if ($user['type'] == 'adm') {
+    //             $data = json_decode(file_get_contents('php://input'));
+    //             if($data->name != null || $data->name != '' || 
+    //               $data->description != null || $data->description != '' || 
+    //               $data->password != null || $data->password != '' || 
+    //               $data->categoryId != null || $data->categoryId != '' ||
+    //               $data->price != null || $data->price != ''||
+    //               $data->ingredients != null || $data->ingredients != '') {
+    //                 $resp = $this->recipes->createRecipe($data);
+    //                 if ($resp) {
+    //                     $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
+    //                 } else {
+    //                     $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+    //                 }
+    //             }
+    //             else {
+    //                 $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
+    //             }
+    //             echo $response;
+    //         } else {
+    //             echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
+    //         }
+    //     } else {
+    //         echo json_encode('Incorrect execution');
+    //     }
+    // }
+
     public function add() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $user = $this->userIsAuthenticated();
-            if ($user['type'] == 'adm') {
-                $data = json_decode(file_get_contents('php://input'));
-                if($data->name != null || $data->name != '' || 
-                  $data->description != null || $data->description != '' || 
-                  $data->password != null || $data->password != '' || 
-                  $data->categoryId != null || $data->categoryId != '' ||
-                  $data->price != null || $data->price != ''||
-                  $data->ingredients != null || $data->ingredients != '') {
-                    $resp = $this->recipes->createRecipe($data);
-                    if ($resp) {
-                        $response = json_encode(['status' => 1, 'message' => 'Record created successfully.']);
-                    } else {
-                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
-                    }
+            $data = json_decode(file_get_contents('php://input'));
+            if($data->name != null || $data->name != '' || 
+                $data->description != null || $data->description != '' || 
+                $data->password != null || $data->password != '' || 
+                $data->categoryId != null || $data->categoryId != '' ||
+                $data->price != null || $data->price != ''
+                // ||
+                // $data->ingredients != null || $data->ingredients != ''
+                ) {
+                $data->ingredients =  json_decode('[
+                    { "id": 1, "quantity": 1.0 },
+                    { "id": 2, "quantity": 2.0 },
+                    { "id": 3, "quantity": 1.0 }
+                ]');
+                $resp = $this->recipes->createRecipe($data);
+                if ($resp['msg']) {
+                    $response = json_encode(['status' => 1, 'createdId' => $resp['lastInsertId'], 'message' => 'Record created successfully.']);
+                } else {
+                    $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
                 }
-                else {
-                    $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
+            }
+            else {
+                $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
+            }
+            echo $response;
+        } else {
+            echo json_encode('Incorrect execution');
+        }
+    }
+
+    /*
+    * Add image recipe
+    */
+    public function addImage() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $file = $this->saveImage($_FILES['image']['name'],$_FILES['image']['tmp_name'], $_FILES["image"]["size"]);
+            if ($file) {
+                $data['image'] = $file;
+                $resp = $this->recipes->includeImageRecipe($data, $this->value);
+                if ($resp) {
+                    $response = json_encode(['status' => 1, 'message' => 'Image created successfully.']);
+                } else {
+                    $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
                 }
                 echo $response;
             } else {
-                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
+                echo json_encode('Incorrect execution');
             }
         } else {
             echo json_encode('Incorrect execution');
@@ -87,7 +142,40 @@ class RecipesController extends SecuredController
     }
 
     /*
-    * Update Recipe 
+    * Update image Recipe  
+    */
+    public function updateImage() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            // delete old image
+            $recipe = $this->recipes->getRecipeByIdNoIngredients($this->value);
+            $path = SITE_ROOT . "\assets\images\\";
+            $oldImage = $path . $recipe->image;
+            if (file_exists($oldImage)) {
+                unlink($oldImage);
+                // create new image and update on database
+                $file = $this->saveImage($_FILES['image']['name'],$_FILES['image']['tmp_name'], $_FILES["image"]["size"]);
+                if ($file) {
+                    $data['image'] = $file;
+                    $resp = $this->recipes->updateImageRecipe($data, $this->value);
+                    if ($resp) {
+                        $response = json_encode(['status' => 1, 'message' => 'Image created successfully.']);
+                    } else {
+                        $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
+                    }
+                    echo $response;
+                } else {
+                    echo json_encode(['status' => 0, 'message' => 'Could not delete. This file does not exist.']);
+                }
+            } else {
+                echo json_encode('Incorrect execution');
+            }
+        } else {
+            echo json_encode('Incorrect execution');
+        }
+    }
+
+    /*
+    * Update recipe 
     */
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
@@ -95,7 +183,7 @@ class RecipesController extends SecuredController
             if ($user['type'] == 'adm') { 
                 $data = json_decode(file_get_contents('php://input'),true);
                 if($data != null || $data != '') {
-                    $resp = $this->recipes->updateRecipes($data, $this->value);
+                    $resp = $this->recipes->updateRecipe($data, $this->value);
                     if ($resp) {
                         $response = json_encode(['status' => 1, 'message' => 'Record updated successfully.']);
                     } else {
@@ -111,6 +199,32 @@ class RecipesController extends SecuredController
         } else {
             echo json_encode('Incorrect execution');
         }
+    }
+
+    /*
+    * Save image
+    */
+    public function saveImage($fileName, $fileTempName, $fileSize) {
+        $path = SITE_ROOT . "\assets\images\\";
+        $hash = md5(uniqid());
+        $date = date('Y-m-d');
+        $targetFile = sprintf("%s%s_%s_%s", $path, $date, $hash, $fileName["image"]);
+        $file = sprintf("%s_%s_%s", $date, $hash, $fileName["image"]);
+        $target_file=$path.basename($fileName["image"]);
+        $imageFileType=pathinfo($target_file,PATHINFO_EXTENSION);
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" ) {
+            echo json_encode(['status' => 0, 'message' => 'Sorry, only JPG, JPEG e PNG files are allowed.']);
+            die();   
+        }
+        if ($fileSize["image"] > 1048576) {
+            echo json_encode(['status' => 0, 'message' => 'Sorry, your image is too large. Upload less than 1 MB KB in size.']);
+            die();   
+        }
+        $upload = move_uploaded_file($fileTempName["image"], $targetFile);
+        if (!$upload) {
+            return false;
+        }
+        return $file;
     }
 
     /*

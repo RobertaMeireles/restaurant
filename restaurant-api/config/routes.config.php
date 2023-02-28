@@ -21,6 +21,8 @@ return [
     'recipes'               => ['controller' => 'RecipesController', 'action' => 'list'],
     'recipesbycategory'     => ['controller' => 'RecipesController', 'action' => 'recipesbycategory'],
     'recipes/add'           => ['controller' => 'RecipesController', 'action' => 'add'],
+    'recipes/addimage'      => ['controller' => 'RecipesController', 'action' => 'addImage'],
+    'recipes/updateimage'   => ['controller' => 'RecipesController', 'action' => 'updateImage'],
     'recipes/update'        => ['controller' => 'RecipesController', 'action' => 'update'],
     'recipes/delete'        => ['controller' => 'RecipesController', 'action' => 'delete'],
     'orders'                => ['controller' => 'OrdersController', 'action' => 'list'],

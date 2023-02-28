@@ -10,6 +10,8 @@ header('Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Methods
 
 require_once('../vendor/autoload.php');
 
+define('SITE_ROOT', realpath(dirname(__FILE__)));
+
 $dotenv = Dotenv\Dotenv::createUnsafeImmutable(__DIR__ . DIRECTORY_SEPARATOR . '..');
 $dotenv->load();
 

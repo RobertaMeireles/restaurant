@@ -46,24 +46,12 @@ class Database
     /*
     * send view to database
     */
-    public function queryFullRecipe($id = null) {
-        $this->conn = $this->connect();
-        if($id) {
-            $sql = "SELECT * FROM fullrecipes WHERE recipeId = $id;";
-        } else {
-            $sql = "SELECT * FROM fullrecipes;";
-        }
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll();
-    }
-
-    // public function queryFullOrders($id = null) {
+    // public function queryFullRecipe($id = null) {
     //     $this->conn = $this->connect();
     //     if($id) {
-    //         $sql = "SELECT * FROM fullorders WHERE orderId = $id;";
+    //         $sql = "SELECT * FROM fullrecipes WHERE recipeId = $id;";
     //     } else {
-    //         $sql = "SELECT * FROM fullorders;";
+    //         $sql = "SELECT * FROM fullrecipes;";
     //     }
     //     $stmt = $this->conn->prepare($sql);
     //     $stmt->execute();
@@ -71,8 +59,6 @@ class Database
     // }
 
     public function queryGetView($view, $where = null) {
-        // var_dump($where);
-        // die();
         $this->conn = $this->connect();
         if($where) {
             $sql = "SELECT * FROM $view WHERE $where;";
