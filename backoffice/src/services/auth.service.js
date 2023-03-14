@@ -1,30 +1,15 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://project-tcc.test/restaurant-api/public";
 
-const register = (email, password, nome) => {
+const login = (username, password) => {
   return axios
-  .post(API_URL + "/auth/signup", {
-    email,
-    password,
-    nome,
-  })
-  .then((res) => {
-    if (res.data) {
-      localStorage.setItem("user", JSON.stringify(res.data));
-    }
-    return res.data;
-  })
-};
-
-const login = (email, password) => {
-  return axios
-    .post(API_URL + "/auth/login", {
-        email,
+    .post(API_URL + "/", {
+        username,
         password,
     })
     .then((response) => {
-      if (response.data.accessToken) {
+      if (response.data.token) {
         localStorage.setItem("user", JSON.stringify(response.data));
       }
       return response.data;
@@ -41,7 +26,6 @@ const getCurrentUser = () => {
 
 // eslint-disable-next-line
 export default {
-  register,
   login,
   logout,
   getCurrentUser,

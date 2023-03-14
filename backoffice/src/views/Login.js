@@ -8,42 +8,25 @@ import Button from 'react-bootstrap/Button'
 const Login = () => {
 
   const [submitted, setSubmitted] = useState(false)
-  const [email, setEmail] = useState("")
+  const [username, setUserName] = useState("")
   const [password, setPassword] = useState("")
   const [message, setMessage] = useState("")
   const [regexMessage, setRegexMessage] = useState(true)
 
 
-  function onChangeEmail(event) {
-    event.persist()
-    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        if(re.test(String(event.target.value).toLowerCase())){
-            setEmail(event.target.value);
-        }           
-    }
-
-    const onChangePassword = (e) => {
-      e.persist()
-      if (e.target.value.length >= 6){
-        setPassword(e.target.value);
-      } 
-    }
-
-
-    const checkLogin = (e) => {
-      e.preventDefault();
-      if (email && password){
-        setSubmitted(true)
-        handleLogin()
-      } 
+  const checkLogin = (e) => {
+    e.preventDefault();
+    if (username && password){
       setSubmitted(true)
+      handleLogin()
+    } 
+    setSubmitted(true)
 
-    }
-
+  }
 
   const handleLogin = () => {
 
-      AuthService.register(email, password).then(
+      AuthService.login(username, password).then(
         () => {
             window.location.href = "/home"
         },
@@ -70,14 +53,14 @@ const Login = () => {
                     <Form onSubmit={checkLogin}>
 
                         <Form.Group>
-                            <Form.Control type="text" name="email" placeholder="Email" onChange={onChangeEmail} />
+                            <Form.Control type="text" name="email" placeholder="Username" onChange={(e) => setUserName(e.target.value)} />
                         </Form.Group>
                         <div className="error-div">
-                            {submitted && !email && <span className='erro-contact'>Incorret E-mail</span>} 
+                            {submitted && !username && <span className='erro-contact'>Incorret E-mail</span>} 
                         </div>
 
                         <Form.Group>
-                            <Form.Control type="text" name="password" placeholder="Password" onChange={onChangePassword}/>
+                            <Form.Control type="text" name="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)}/>
                         </Form.Group>
                         <div className="error-div">
                             {submitted && !password && <span className='erro-contact'>Incorret Password</span>} 
