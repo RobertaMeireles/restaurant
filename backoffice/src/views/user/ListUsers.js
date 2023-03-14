@@ -10,16 +10,11 @@ import Table from 'react-bootstrap/Table'
 import { AiTwotoneDelete } from "react-icons/ai"
 import { BsPenFill } from "react-icons/bs"
 
-
 export default function ListUser() {
 
-    const navigate = useNavigate()
+   const navigate = useNavigate()
 
-    const [users, setUsers] = useState([])
-
-    useEffect (() => {
-        getUsers();
-    }, []);
+   const [users, setUsers] = useState([])
 
    const getUsers = () => {
         services.getAll(`/users`)
@@ -32,6 +27,15 @@ export default function ListUser() {
             navigate('/home')
         })
     }
+
+    useEffect (() => {
+        if(services.getCurrentUser()) {
+            getUsers();
+        }
+        else {
+            navigate('/home')
+        }
+    }, []);
 
     return (
         <>

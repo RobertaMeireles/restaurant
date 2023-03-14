@@ -17,11 +17,6 @@ export default function ListRecipes() {
 
     const [recipes, setRecipes] = useState([]);
 
-    useEffect (() => {
-        getRecipes()
-    }, []);
-
-
     const getRecipes = () => {
         services.getAll(`/recipes`)
         .then(response => {
@@ -33,6 +28,16 @@ export default function ListRecipes() {
             navigate('/home')
         })
     }
+
+    useEffect (() => {
+        if(services.getCurrentUser()) {
+            getRecipes();
+        }
+        else {
+            navigate('/home')
+        }
+    }, [])
+
 
     return (
         <>

@@ -8,18 +8,17 @@ import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import { AiTwotoneDelete } from "react-icons/ai"
-import { BsPenFill } from "react-icons/bs"
 
-export default function ListCategories() {
+export default function ListTablet() {
 
     const navigate = useNavigate()
 
-    const [categories, setCategories] = useState([])
+    const [tablets, setUsers] = useState([])
 
-   const getCategories = () => {
-        services.getAll(`/categories`)
+   const getTablets = () => {
+        services.getAll(`/tablets`)
         .then(response => {
-            setCategories(response.data.message)
+            setUsers(response.data.message)
         })
         .catch(error => {
             console.error(error);
@@ -28,9 +27,26 @@ export default function ListCategories() {
         })
     }
 
+    const createTablet = () => {
+        services.create('/tablets/add', 
+            {
+                restaurantId: 1
+            })
+        .then((res) => {
+            if (res) {
+                navigate('/home')
+                alert(`Tablet criado.`)
+            }
+        }).catch((error) => {
+            console.error(error)
+            navigate('/home')
+            alert(`Um problema ocorreu. Tente mais tarde.`)
+        })
+    }
+
     useEffect (() => {
         if(services.getCurrentUser()) {
-            getCategories();
+            getTablets();
         }
         else {
             navigate('/home')
@@ -49,23 +65,21 @@ export default function ListCategories() {
             <div className = "card-div">
                 <Card>
                     <Card.Body>
-                        <h1>Categorias</h1>
-                        <Button href="categoria/criar" variant="primary">Criar</Button>
+                        <h1>Tablet</h1>
+                        <Button variant="primary" onClick={() => createTablet()}>Criar</Button>
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Nome</th>
-                                    <th>Update / Deletar</th>
+                                    <th>Tablet</th>
+                                    <th>Deletar</th>
                                 </tr>
                             </thead>
                             <tbody>   
-                                {categories.map((category,key) => 
+                                {tablets.map((tablet,key) => 
                                     <tr key={key}>
-                                        <td>{category.id}</td>
-                                        <td>{category.name}</td>
-                                        <td><a href={'/categoria/update/'+ category.id} className="update"><BsPenFill /></a>
-                                            <a href={'/categoria/deletar/'+ category.id} className="delete" ><AiTwotoneDelete /></a>
+                                        <td>{tablet.id}</td>
+                                        <td>
+                                            <a href={'/tablet/deletar/'+ tablet.id} className="delete" ><AiTwotoneDelete /></a>
                                         </td>
                                     </tr>
                                 )}

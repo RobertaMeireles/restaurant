@@ -17,10 +17,6 @@ export default function ListOrder() {
 
     const [orders, setOrder] = useState([])
 
-    useEffect (() => {
-        getOrder();
-    }, []);
-
    const getOrder = () => {
         services.getAll(`/companyorders`)
         .then(response => {
@@ -33,6 +29,10 @@ export default function ListOrder() {
             navigate('/home')
         })
     }
+
+    useEffect (() => {
+        getOrder();
+    }, []);
 
     return (
         <>
@@ -50,18 +50,22 @@ export default function ListOrder() {
                         <Table striped bordered hover>
                             <thead>
                                 <tr>
-                                    <th>#</th>
                                     <th>Pedido</th>
+                                    <th>Tablet</th>
+                                    <th>Pedido</th>
+                                    <th>Quantidade</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>   
                                 {orders.map((order,key) => 
                                     <tr key={key}>
+                                        <td>{order.orderId}</td>
                                         <td>{order.tabletId}</td>
                                         <td>{order.recipeName}</td>
+                                        <td>{order.quantity}</td>
                                         <td>{order.status}</td>
-                                        <td><a href={'/pedidos/update/'+ order.id} className="update"><BsPenFill /></a></td>
+                                        <td><a href={'/pedido/update/'+ order.orderId} className="update"><BsPenFill /></a></td>
                                     </tr>
                                 )}
                             </tbody>

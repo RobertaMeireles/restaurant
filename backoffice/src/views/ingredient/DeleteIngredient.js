@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useNavigate } from "react-router-dom"
 import services from "../../services/user.service"
 import Header from '../../components/Header'
 import SiderBar from '../../components/SideBar'
@@ -8,6 +9,8 @@ import Button from 'react-bootstrap/Button'
 import { useParams } from "react-router-dom";
 
 export default function DeleteIngredient () {
+
+    const navigate = useNavigate()
 
     const {id} = useParams();
     const [currentIgredient, setCurrentIgredient] = useState([])
@@ -36,9 +39,14 @@ export default function DeleteIngredient () {
         })
     }
 
-    useEffect (() =>{
-        getIngredients()
-    },[])
+    useEffect (() => {
+        if(services.getCurrentUser()) {
+            getIngredients();
+        }
+        else {
+            navigate('/home')
+        }
+    }, []);
 
 
     return (

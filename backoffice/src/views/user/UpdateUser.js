@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useNavigate } from "react-router-dom"
 import services from "../../services/user.service"
 import Header from '../../components/Header'
 import SiderBar from '../../components/SideBar'
@@ -10,6 +11,7 @@ import { useParams } from "react-router-dom";
 
 export default function UpdateUser  ()  {
 
+    const navigate = useNavigate()
 
     const {id} = useParams();
     const [currentUser, setCurrentUser] = useState([])
@@ -42,10 +44,14 @@ export default function UpdateUser  ()  {
         })
       }
 
-
-    useEffect (() =>{
-        getUser()
-    },[])
+    useEffect (() => {
+        if(services.getCurrentUser()) {
+            getUser();
+        }
+        else {
+            navigate('/home')
+        }
+    }, []);
 
     return (
         <>

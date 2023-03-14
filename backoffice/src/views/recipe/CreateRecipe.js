@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState } from "react";
+import React, { useEffect, useState } from "react"
+import services from "../../services/user.service"
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
@@ -78,6 +78,12 @@ export default function CreateRecipe() {
             navigate('/home');
         });
     }
+
+    useEffect (() => {
+        if(!services.getCurrentUser()) {
+            navigate('/home')
+        }
+    }, []);
 
     return (
         <div>

@@ -8,17 +8,17 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { useParams } from "react-router-dom";
 
-export default function DeleteUser () {
+export default function DeleteTablet () {
 
     const navigate = useNavigate()
 
     const {id} = useParams();
-    const [currentUser, setCurrentUser] = useState([])
+    const [currentTablet, setCurrentTablet] = useState([])
 
-    const getUser = () => {
-        services.getId(`/users/${id}`)
+    const getTablet = () => {
+        services.getId(`/tablets/${id}`)
         .then(response => {
-            setCurrentUser(response.data.message)
+            setCurrentTablet(response.data.message)
         })
         .catch(error => {
             console.error(error)
@@ -26,11 +26,11 @@ export default function DeleteUser () {
         })
     }
 
-    const deleteCategory = (id) => {
-        services.deleteId(`/users/delete/${id}`, currentUser)
+    const deleteTablet = (id) => {
+        services.deleteId(`/tablets/delete/${id}`, currentTablet)
         .then(response => {
             console.log(response)
-            alert(`Usuário deletado.`)
+            alert(`Tablet deletado.`)
         })
         .catch(error => {
             console.error(error);
@@ -40,7 +40,7 @@ export default function DeleteUser () {
 
     useEffect (() => {
         if(services.getCurrentUser()) {
-            getUser();
+            getTablet();
         }
         else {
             navigate('/home')
@@ -59,14 +59,14 @@ export default function DeleteUser () {
                 <div className = "card-div">
                     <Card>  
                         <Card.Body>
-                            <h1>Deletar Usuário</h1>
+                            <h1>Deletar Tablet</h1>
                             <Form className="form-itens">
                                 <Form.Group>
                                     <Form.Control type="text"                                  
                                     disabled="disabled"
-                                    defaultValue={currentUser.name} />
+                                    defaultValue={currentTablet.id} />
                                 </Form.Group>
-                                <Button className="form-submit" variant="primary" type="submit" onClick={() => deleteCategory(currentUser.id)}>
+                                <Button className="form-submit" variant="primary" type="submit" onClick={() => deleteTablet(currentTablet.id)}>
                                     Deletar
                                 </Button>
                             </Form>

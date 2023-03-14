@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useNavigate } from "react-router-dom"
 import services from "../../services/user.service"
 import Header from '../../components/Header'
 import SiderBar from '../../components/SideBar'
@@ -8,6 +9,8 @@ import Button from 'react-bootstrap/Button'
 import { useParams } from "react-router-dom";
 
 export default function DeleteProduct () {
+
+    const navigate = useNavigate()
 
     const {id} = useParams();
     const [currentCategory, setCurrentCategory] = useState([])
@@ -35,11 +38,14 @@ export default function DeleteProduct () {
         })
     }
 
-    console.log(currentCategory.id)
-
-    useEffect (() =>{
-        getCategory()
-    },[])
+    useEffect (() => {
+        if(services.getCurrentUser()) {
+            getCategory();
+        }
+        else {
+            navigate('/home')
+        }
+    }, []);
 
 
     return (

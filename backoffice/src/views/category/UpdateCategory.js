@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useNavigate } from "react-router-dom"
 import services from "../../services/user.service"
 import Header from '../../components/Header'
 import SiderBar from '../../components/SideBar'
@@ -10,6 +11,7 @@ import { useParams } from "react-router-dom";
 
 export default function UpdateCategory  ()  {
 
+    const navigate = useNavigate()
 
     const {id} = useParams();
     const [currentCategory, setCurrentCategory] = useState([])
@@ -32,7 +34,6 @@ export default function UpdateCategory  ()  {
     }
 
 
-
     const updateCategory= () => {
         services.update(`/categories/update/${id}`, currentCategory)
           .then((res) => {
@@ -43,10 +44,14 @@ export default function UpdateCategory  ()  {
         })
       }
 
-
-    useEffect (() =>{
-        getCategory()
-    },[])
+    useEffect (() => {
+        if(services.getCurrentUser()) {
+            getCategory();
+        }
+        else {
+            navigate('/home')
+        }
+    }, []);
 
     return (
         <>

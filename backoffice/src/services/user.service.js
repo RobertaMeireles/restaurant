@@ -23,6 +23,27 @@ const deleteId = (request) => {
   return axios.delete(`${API_URL}${request}`, { headers: authHeader() })
 }
 
+// const userLogged = () => {
+//   const checkUser = JSON.parse(localStorage.getItem("user"));
+//   console.log(checkUser);
+//   if(!checkUser) {
+//       return true
+//   } else {
+//     return false
+//   }
+// };
+
+const getCurrentUser = () => {
+  const checkUser = JSON.parse(localStorage.getItem("user"));
+  console.log(checkUser);
+  if(checkUser.type === 'adm') {
+      return true
+  } else {
+      return false
+  }
+};
+
+
 // eslint-disable-next-line
 export default {
   create,
@@ -30,4 +51,5 @@ export default {
   getId,
   update,
   deleteId,
+  getCurrentUser
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import services from "../../services/user.service"
 import { useNavigate } from "react-router-dom";
 import Header from '../../components/Header'
@@ -40,6 +40,13 @@ export default function CreateCategory  () {
             alert(`Um problema ocorreu. Tente mais tarde.`)
         })
     }
+
+    useEffect (() => {
+        if(!services.getCurrentUser()) {
+            navigate('/home')
+        }
+    }, []);
+
 
     return (
         <>

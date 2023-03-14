@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import services from "../../services/user.service"
 import { useNavigate } from "react-router-dom";
 import Header from '../../components/Header'
@@ -21,7 +21,7 @@ export default function CreateUser  () {
     const checkFields = (e) => {
         e.preventDefault()
         if (name, username, password, restaurantId){
-            setRestaurantId(parseInt(restaurantId))
+            setRestaurantId(parseInt(restaurantId)) 
             createUser()
             setSubmitted(false)
         }else {
@@ -50,6 +50,12 @@ export default function CreateUser  () {
             alert(`Um problema ocorreu. Tente mais tarde.`)
         })
     }
+
+    useEffect (() => {
+        if(!services.getCurrentUser()) {
+            navigate('/home')
+        }
+    }, []);
 
     return (
         <>

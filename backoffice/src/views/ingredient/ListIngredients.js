@@ -17,10 +17,6 @@ export default function ListIngredients() {
 
     const [ingredients, setIngredients] = useState([])
 
-    useEffect (() => {
-        getIngredients();
-    }, []);
-
    const getIngredients = () => {
         services.getAll(`/ingredients`)
         .then(response => {
@@ -32,6 +28,15 @@ export default function ListIngredients() {
             navigate('/home')
         })
     }
+
+    useEffect (() => {
+        if(services.getCurrentUser()) {
+            getIngredients();
+        }
+        else {
+            navigate('/home')
+        }
+    }, []);
 
     return (
         <>

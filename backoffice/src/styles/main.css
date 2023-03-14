@@ -6,7 +6,9 @@
 .navbar.navbar-expand-lg.navbar-light.bg-light.fixed-top {
     margin-bottom: 0;
 }
-
+.logo {
+    padding: 10px;
+}
 /*SideBar*/
 .side {
     width: 15rem;

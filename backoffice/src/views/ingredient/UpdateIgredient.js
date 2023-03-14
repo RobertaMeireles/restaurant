@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { useNavigate } from "react-router-dom"
 import services from "../../services/user.service"
 import Header from '../../components/Header'
 import SiderBar from '../../components/SideBar'
@@ -9,6 +10,8 @@ import { useParams } from "react-router-dom";
 
 
 export default function UpdateIngredient ()  {
+
+    const navigate = useNavigate()
 
     const {id} = useParams();
     const [currentIgredient, setCurrentIgredient] = useState([])
@@ -41,9 +44,15 @@ export default function UpdateIngredient ()  {
         })
       }
 
-    useEffect (() =>{
-        getIngredient()
-    },[])
+    useEffect (() => {
+        if(services.getCurrentUser()) {
+            getIngredient();
+        }
+        else {
+            navigate('/home')
+        }
+    }, []);
+    
 
     return (
         <>
@@ -57,7 +66,7 @@ export default function UpdateIngredient ()  {
                 <div className = "card-div">
                     <Card>  
                         <Card.Body>
-                            <h1 >Atualizar Usuário</h1>
+                            <h1 >Atualizar Ingrediente</h1>
                             {currentIgredient ? (
                             <Form className="form-itens" onSubmit={UpdateIngredient}>
                                 <Form.Group className="mb-3">
