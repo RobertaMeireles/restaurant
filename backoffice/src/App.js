@@ -19,6 +19,9 @@ import UpdateIngredient from './views/ingredient/UpdateIgredient'
 import DeleteIngredient from './views/ingredient/DeleteIngredient'
 import ListRecipes from './views/recipe/ListRecipes'
 import CreateRecipe from './views/recipe/CreateRecipe'
+import UpdateRecipe from './views/recipe/UpdateRecipe'
+import DeleteRecipe from './views/recipe/DeleteRecipe'
+
 import Login from './views/Login'
 import Home from './views/Home'
 import NotFound from './views/notFound'
@@ -27,7 +30,6 @@ function App() {
 
   const Private = ({Item}) => {
     const signed = useAuth();
-    console.log(signed)
     if(signed) {
       return <Item/>
     } else {
@@ -39,28 +41,6 @@ function App() {
     <div>
       <BrowserRouter>
       <Routes>
-        {/* <Route index element={<Login/>} />
-        <Route path="home" element={<Home/>} />
-        <Route path="pedidos" element={<ListOrders/>} />
-        <Route path="pedido/update/:id" element={<UpdateOrders/>} />
-        <Route path="categorias" element={<ListCategories/>} />
-        <Route path="categoria/criar" element={<CreateCategory/>} />
-        <Route path="categoria/update/:id" element={<UpdateCategory/>} />
-        <Route path="categoria/deletar/:id" element={<DeletarCategory/>} />
-        <Route path="usuarios" element={<ListUsers/>} />
-        <Route path="usuario/criar" element={<CreateUser/>} />
-        <Route path="usuario/update/:id" element={<UpdateUser/>} />
-        <Route path="usuario/deletar/:id" element={<DeleteUser/>} />
-        <Route path="tablets" element={<ListTablets/>} />
-        <Route path="tablet/deletar/:id" element={<DeleteTablet/>} />
-        <Route path="ingredientes" element={<ListIngredients/>} />
-        <Route path="ingrediente/criar" element={<CreateIngredient/>} />
-        <Route path="ingrediente/update/:id" element={<UpdateIngredient/>} />
-        <Route path="ingrediente/deletar/:id" element={<DeleteIngredient/>} />
-        <Route path="receitas" element={<ListRecipes/>} />
-        <Route path="receita/criar" element={<CreateRecipe/>} />
-        <Route path="*" element={<NotFound/>} /> */}
-
         <Route index element={<Login/>} />
         <Route path="home" element={<Private Item={Home} />} />
         <Route path="pedidos" element={<Private Item={ListOrders} />} />
@@ -81,6 +61,8 @@ function App() {
         <Route path="ingrediente/deletar/:id" element={<Private Item={DeleteIngredient} />} />
         <Route path="receitas" element={<Private Item={ListRecipes} />} />
         <Route path="receita/criar" element={<Private Item={CreateRecipe} />} />
+        <Route path="receita/update/:id" element={<Private Item={UpdateRecipe} />} />
+        <Route path="receita/deletar/:id" element={<Private Item={DeleteRecipe} />} />
         <Route path="*" element={<NotFound/>} />
       </Routes>
       </BrowserRouter>
