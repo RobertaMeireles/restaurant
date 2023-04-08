@@ -2,7 +2,7 @@ import axios from "axios"
 import authHeader from "./auth-header"
 import authHeaderImg from "./auth-header-img"
 
-const API_URL = "https://project-tcc.test/restaurant-api/public"
+const API_URL = "http://project-tcc.test/restaurant-api/public"
 
 const getAll = (request) => {
   return axios.get( `${API_URL}${request}`, { headers: authHeader() })

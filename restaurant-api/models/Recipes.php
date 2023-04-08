@@ -26,7 +26,7 @@ class Recipes extends Database {
     * List recipe with indegredients by ID
     */
     public function getRecipeById( $where ) {
-        return $this->queryGetView('fullrecipes', 'recipeId = ' . $where);
+        return $this->queryGetView('fullrecipes', 'categoryId = ' . $where);
     }
 
 

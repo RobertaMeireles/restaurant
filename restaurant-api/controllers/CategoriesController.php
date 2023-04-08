@@ -19,17 +19,12 @@ class CategoriesController extends SecuredController {
     */
     public function list() {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
-            $user = $this->userIsAuthenticated();
-            if ($user['type'] == 'adm') {
-                if ( $this->value ) {
-                    $response = json_encode(['status' => 1, 'message' => $this->categories->getByIdCategories($this->value)] , JSON_UNESCAPED_UNICODE);
-                } else {
-                    $response = json_encode(['status' => 1, 'message' => $this->categories->getAllCategories()] , JSON_UNESCAPED_UNICODE);
-                }
-                echo $response;
+            if ( $this->value ) {
+                $response = json_encode(['status' => 1, 'message' => $this->categories->getByIdCategories($this->value)] , JSON_UNESCAPED_UNICODE);
             } else {
-                echo json_encode(['status' => 0, 'message' => 'Access not allowed.']);
+                $response = json_encode(['status' => 1, 'message' => $this->categories->getAllCategories()] , JSON_UNESCAPED_UNICODE);
             }
+            echo $response;
         } else {
             echo json_encode('Incorrect execution.');
         }
