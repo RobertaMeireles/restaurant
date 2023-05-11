@@ -5,9 +5,7 @@ import services from "../../services/user.service"
 import Header from '../../components/Header'
 import SiderBar from '../../components/SideBar'
 import Card from 'react-bootstrap/Card'
-import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
-import { AiTwotoneDelete } from "react-icons/ai"
 import { BsPenFill } from "react-icons/bs"
 
 

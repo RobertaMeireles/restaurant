@@ -62,13 +62,13 @@ export default function ListIngredients() {
                                 </tr>
                             </thead>
                             <tbody>   
-                                {ingredients.map((user,key) => 
+                                {ingredients.map((ingredient,key) => 
                                     <tr key={key}>
-                                        <td>{user.id}</td>
-                                        <td>{user.name}</td>
-                                        <td>{user.unity}</td>
-                                        <td><a href={'/ingrediente/update/'+ user.id} className="update"><BsPenFill /></a>
-                                            <a href={'/ingrediente/deletar/'+ user.id} className="delete" ><AiTwotoneDelete /></a>
+                                        <td>{ingredient.id}</td>
+                                        <td>{ingredient.name}</td>
+                                        <td>{ingredient.unity}</td>
+                                        <td><a href={'/ingrediente/update/'+ ingredient.id} className="update"><BsPenFill /></a>
+                                            <a href={'/ingrediente/deletar/'+ ingredient.id} className="delete" ><AiTwotoneDelete /></a>
                                         </td>
                                     </tr>
                                 )}

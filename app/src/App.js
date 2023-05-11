@@ -40,7 +40,7 @@ function App() {
   }
 
   const filterRecipe = (categoryId) => {
-    services.getAll(`/recipes/${categoryId}`)
+    services.getAll(`/recipesbycategory/${categoryId}`)
     .then(response => {
         setRecipes(response.data.message)
     })
@@ -103,7 +103,7 @@ function App() {
         <div className="mainContainer">
           <div className="banner">
           </div>
-          {/* cards */}
+          {/* get categories */}
           <div className="dishContainer">
               <div className="menuCard">
               <div className="subMenuContianer">
@@ -124,6 +124,7 @@ function App() {
               )}
               </div>
           </div>
+          {/* Menu */}
           <div className='menu'>
             <h3>Menu</h3>
             </div>
@@ -133,12 +134,12 @@ function App() {
               itemId={recipe.id}
               name={recipe.name} 
               imgSrc={"http://project-tcc.test/restaurant-api/public/assets/images/" + recipe.image} 
-              description={recipe.description}
               price={recipe.price}
             />
           )}
           </div>
       </div>
+      {/* cart */}
       <div className="rightMenu">
         {!cart ? (
           <div className='cartbox'>

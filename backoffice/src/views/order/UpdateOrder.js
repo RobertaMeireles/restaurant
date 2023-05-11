@@ -1,6 +1,5 @@
 import React  from 'react'
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import services from "../../services/user.service"
 import Header from '../../components/Header'
 import SiderBar from '../../components/SideBar'
@@ -13,7 +12,6 @@ import Form from 'react-bootstrap/Form'
 
 export default function UpdateOrder() {
     const {id} = useParams();
-    const navigate = useNavigate()
 
     const [currentOrder, setCurrentOrder] = useState([])
     const [orderStatus, setOrderStatus] = useState([])

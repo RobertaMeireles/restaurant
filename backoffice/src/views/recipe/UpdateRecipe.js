@@ -10,34 +10,38 @@ import { useParams } from "react-router-dom";
 
 export default function CreateRecipe() {
 
-    /*
-    se passar algum ingrediente que exista com a mesma quantidade vai deletar
-    se passar algum ingrediente novo vai acrescentar
-    se passar algum ingrediente que exista com a quantidade diferente vai fazer o update
-    */
-
     const navigate = useNavigate()
-
     const {id} = useParams();
-    const [currentRecipe, setCurrentRecipe] = useState([])
 
     const [categories, setCategories] = useState([])
     const [ingredients, setIngredients] = useState([])
+    const [currentRecipe, setCurrentRecipe] = useState([])
+    const [registerRecipe, setRegisterRecipe] = useState([])
     const [submitted, setSubmitted] = useState(false)
+    const [currentIngredients, setCurrentIngredients] = useState([])
+    const [quantCurrentIngredients, setQuantCurrentIngredients] = useState('')
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
     const [categoryId, setCategoryId] = useState('')
     const [price, setPrice] = useState('')
     const [image, setImage] = useState('')
     const [ingredientList, setingredientList] = useState([{id:"", quantity:""}]);
-          
+
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        setCurrentRecipe(values => ({...values, [name]: value}));
+        setRegisterRecipe(values => ({...values, [name]: value}));
     }
-
-    console.log(currentRecipe)
+          
+    const checkFields = (e) => {
+        e.preventDefault();
+        if (name && description && categoryId && price && image){
+            createRecipe()
+            setSubmitted(false)
+        }else {
+            setSubmitted(true)
+        }
+    }
 
     const handleinputchange=(e, index)=>{
         const {name, value}= e.target;
@@ -56,6 +60,43 @@ export default function CreateRecipe() {
         setingredientList([...ingredientList, { id:'', quantity:''}]);
     }
 
+    const createRecipe = () => {
+        const myFormData = new FormData();
+        myFormData.append('image', image);
+        const formDataObj = {};
+        myFormData.forEach((value, key) => (formDataObj[key] = value));
+
+        services.create('/recipes/add', 
+            {
+                name: name,
+                description: description,
+                categoryId: categoryId,
+                price: price,
+                ingredients: [
+                    ...ingredientList
+                ]
+            }).then(function(response) {
+                if (response.data){
+                    services.createImage(`/recipes/addimage/${response.data.createdId}`, // eslint-disable-line 
+                    {
+                        image: formDataObj
+                    }).then(function(response) {
+                        alert(`Receita registrada.`)
+                        navigate('/home');
+    
+                    }).catch((error) => {
+                        console.error(error)
+                        alert(`Um problema ocorreu. Tente mais tarde.`)
+                        navigate('/home');
+                    })
+                }
+            }).catch((error) => {
+            console.error(error)
+            navigate('/home')
+            alert(`Um problema ocorreu. Tente mais tarde.`)
+        })
+    }
+
     const getCategories = () => {
          services.getAll(`/categories`)
          .then(response => {
@@ -68,7 +109,23 @@ export default function CreateRecipe() {
          })
     }
 
+    const getRecipe = () => {
+        services.getId(`/recipes/${id}`)
+        .then(response => {
+            console.log(response.data.message)
+            setCurrentRecipe(response.data.message[0])
+            // setQuantCurrentIngredients(response.data.message.length)
+            // console.log(quantCurrentIngredients)
+            setCurrentIngredients(response.data.message)
 
+        })
+        .catch(error => {
+            console.error(error)
+            alert(`Um problema ocorreu. Tente mais tarde.`)
+        })
+    }
+
+    getRecipe()
 
     const getIngredients = () => {
         services.getAll(`/ingredients`)
@@ -82,37 +139,18 @@ export default function CreateRecipe() {
         })
     }
 
-    const getRecipe = () => {
-        services.getId(`/recipes/${id}`)
-        .then(response => {
-            console.log(response.data.message[0])
-            setCurrentRecipe(response.data.message[0])
-        })
-        .catch(error => {
-            console.error(error)
-            alert(`Um problema ocorreu. Tente mais tarde.`)
-        })
-    }
-
-    const UpdateRecipe= () => {
-        services.update(`/recipes/update/${id}`, currentRecipe)
-          .then((res) => {
-            console.log(res)
-        }).catch((error) => {
-            console.error(error)
-            alert(`Um problema ocorreu. Tente mais tarde.`)
-        })
-      }
-
     useEffect (() => {
         if(services.getCurrentUser()) {
-            getRecipe();
-            getCategories()
+            getCategories();
+            getIngredients();
+            getRecipe()
         }
         else {
             navigate('/home')
         }
     }, []);
+
+    
 
     return (
         <div>
@@ -126,36 +164,128 @@ export default function CreateRecipe() {
                 <div className = "card-div">
                 <Card>
                     <Card.Body>
-                    <h1>Update Receita</h1>
-                        <Form className="form-itens" onSubmit={UpdateRecipe}>
-                            <Form.Group className="mb-3">
-                                <Form.Control 
-                                    type="text" 
-                                    name="name" 
-                                    defaultValue={currentRecipe.recipeName || ''} 
-                                    onChange={handleChange}
-                                    />
-                            </Form.Group>
-                            {/* <Form.Group className="mb-3">
-                                <Form.Control as="select" 
-                                                name="categoryId" 
-                                                onChange={handleChange}
-                                                 >
-                                    <option value="">Escolha a Categoria</option>
-                                    {categories.map((category,key) => 
-                                        <option key={key} value={category.id}>{category.name}</option>
-                                    )}
-                                </Form.Control>
-                            </Form.Group >
-                            <Form.Group className="mb-3">
-                                <Form.Control as="textarea" 
-                                name="description" rows={3} 
-                                defaultValue={currentRecipe.recipeDescription} />
-                            </Form.Group> */}
-                                <Button className="form-submit" variant="primary" type="submit" >Update</Button>
-                        </Form>
+                        <h1>Atualizar Receita</h1>
+                        {currentRecipe ? (
+                        <Form className="form-itens" onSubmit={checkFields}>
+                        <Form.Group className="mb-3">
+                            <Form.Control 
+                            type="text" 
+                            name="name" 
+                            value={currentRecipe.name || ''}
+                            onChange={(e) => setName(e.target.value)}/>
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Control as="select" 
+                                name="categoryId" 
+                                value={currentRecipe.categoryId || ''}
+                                onChange={(e) => setCategoryId(e.target.value)}>
+                                {categories.map((category,key) => 
+                                    <option key={key} value={category.id}>{category.name}</option>
+                                )}
+                            </Form.Control>
+                        </Form.Group >
+                        <Form.Group className="mb-3">
+                            <Form.Control as="textarea" 
+                             name="description" 
+                             value={currentRecipe.description || ''}
+                             rows={3} onChange={(e) => setDescription(e.target.value)}
+                             />
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Control type="text" 
+                            name="price" 
+                            value={currentRecipe.price || ''}
+                            onChange={(e) => setPrice(e.target.value)}/>
+                        </Form.Group>
+                        <Form.Group controlId="formFile" className="mb-3">
+                            <Form.Control type="file"  name="image" onChange={(e) => setImage(e.target.files[0])}/>
+                        </Form.Group>
+                        {
+                        ingredientList.map( (x,i)=>{
+                        return(
+                            <>
+                                {currentIngredients.map((ing,key) => 
+                                <>
+                                <Card>
+                                    <Card.Body>
+                                        <Form.Group className="mb-3">
+                                        <Form.Control as="select" 
+                                                        name="id" 
+                                                        value={ing.ingredientsId || ''}
+                                                        onChange={ e=>handleinputchange(e,i) }>
+                                            {ingredients.map((ingredient,key) => 
+                                                <option key={key} value={ingredient.id}>{ingredient.name}</option>
+                                            )}
+                                        </Form.Control>
+                                    </Form.Group >
+                                        <Form.Group className="mb-3">
+                                            <Form.Control type="text"  
+                                            name="quantity"
+                                            value={ing.recipeIngredientsQuantity || ''}
+                                            onChange={ e=>handleinputchange(e,i) }/>
+                                        </Form.Group>
+                                    </Card.Body>
+                                </Card>
+                                <div>
+                                    {
+                                    ingredientList.length!==1 &&
+                                        <Button className="mt-3 mb-3" variant="danger" onClick={()=> handleremove(i)}>Remover</Button>
+                                    }
+                                </div>
+                                </>
+                                )}
+
+
+
+
+
+
+
+                                <Card>
+                                    <Card.Body>
+                                        <Form.Group className="mb-3">
+                                        <Form.Control as="select" 
+                                                        name="id" 
+                                                        value={currentRecipe.ingredientsId || ''}
+                                                        onChange={ e=>handleinputchange(e,i) }>
+                                            {ingredients.map((ingredient,key) => 
+                                                <option key={key} value={ingredient.id}>{ingredient.name}</option>
+                                            )}
+                                        </Form.Control>
+                                    </Form.Group >
+                                        <Form.Group className="mb-3">
+                                            <Form.Control type="text"  
+                                            name="quantity"
+                                            value={currentRecipe.recipeIngredientsQuantity || ''}
+                                            onChange={ e=>handleinputchange(e,i) }/>
+                                        </Form.Group>
+                                    </Card.Body>
+                                </Card>
+                                <div>
+                                    {
+                                    ingredientList.length!==1 &&
+                                        <Button className="mt-3 mb-3" variant="danger" onClick={()=> handleremove(i)}>Remover</Button>
+                                    }
+                                    <div>
+                                        { ingredientList.length-1===i &&
+                                            <Button variant="primary" onClick={ handleaddclick}>Acrescentar Ingreendiente</Button>
+                                        }
+                                    </div>
+                                </div>
+                            </>
+                        );
+                    } )} 
+                    <Button className="form-submit" variant="primary" type="submit">Criar</Button>
+                </Form>
+                ) : (
+                    <div>
+                        <h1>Loading...</h1>
+                    </div>
+                )}
+                    { submitted && <span className='erro-contact'>Preencha todos os campos.</span>} 
                     </Card.Body>
                 </Card>
+     
                 </div>
             </div>
         </div>

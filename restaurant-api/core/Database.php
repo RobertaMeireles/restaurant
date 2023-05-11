@@ -46,17 +46,6 @@ class Database
     /*
     * send view to database
     */
-    // public function queryFullRecipe($id = null) {
-    //     $this->conn = $this->connect();
-    //     if($id) {
-    //         $sql = "SELECT * FROM fullrecipes WHERE recipeId = $id;";
-    //     } else {
-    //         $sql = "SELECT * FROM fullrecipes;";
-    //     }
-    //     $stmt = $this->conn->prepare($sql);
-    //     $stmt->execute();
-    //     return $stmt->fetchAll();
-    // }
 
     public function queryGetView($view, $where = null) {
         $this->conn = $this->connect();

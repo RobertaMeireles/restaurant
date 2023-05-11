@@ -20,7 +20,7 @@ class RecipesController extends SecuredController
     public function list() {
         if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
             if ( $this->value ) {
-                $res = $this->recipes->getRecipeById($this->value);
+                $res = $this->recipes->getRecipeByIdWithIngredients($this->value);
                 $response = json_encode(['status' => 1, 'message' =>  $res], JSON_UNESCAPED_UNICODE);
             }else {
                 $res =  $this->recipes->getAllRecipes();
@@ -61,8 +61,6 @@ class RecipesController extends SecuredController
             $user = $this->userIsAuthenticated();
             if ($user['type'] == 'adm') {
                 $data = json_decode(file_get_contents('php://input'));
-                // $response = json_encode($data);
-                // return $response;
                 if($data->name != null || $data->name != '' || 
                   $data->description != null || $data->description != '' || 
                   $data->categoryId != null || $data->categoryId != '' ||
@@ -87,77 +85,6 @@ class RecipesController extends SecuredController
             echo json_encode('Incorrect execution');
         }
     }
-
-
-    // public function add() {
-    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    //         $user = $this->userIsAuthenticated();
-    //         if ($user['type'] == 'adm') {
-    //             $data = json_decode(file_get_contents('php://input'));
-    //             if($data->name != null || $data->name != '' || 
-    //                 $data->description != null || $data->description != '' || 
-    //                 $data->password != null || $data->password != '' || 
-    //                 $data->categoryId != null || $data->categoryId != '' ||
-    //                 $data->price != null || $data->price != ''
-    //                 // ||
-    //                 // $data->ingredients != null || $data->ingredients != ''
-    //                 ) 
-    //             {
-    //                 $data->ingredients =  json_decode('[
-    //                     { "id": 1, "quantity": 1.0 },
-    //                     { "id": 2, "quantity": 2.0 },
-    //                     { "id": 3, "quantity": 1.0 }
-    //                 ]');
-    //                 $resp = $this->recipes->createRecipe($data);
-    //                 if ($resp['msg']) {
-    //                     $response = json_encode(['status' => 1, 'createdId' => $resp['lastInsertId'], 'message' => 'Record created successfully.']);
-    //                 } else {
-    //                     $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
-    //                 }
-    //             }
-    //             else {
-    //                 $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
-    //             }
-    //         }else {
-    //             $response = json_encode(['status' => 0, 'message' => 'sem user adm.']);
-    //         }
-    //         echo $response;
-    //     } else {
-    //         echo json_encode('Incorrect execution');
-    //     }
-    // }
-
-    // public function add() {
-    //     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    //         $data = json_decode(file_get_contents('php://input'));
-    //         if($data->name != null || $data->name != '' || 
-    //             $data->description != null || $data->description != '' || 
-    //             $data->password != null || $data->password != '' || 
-    //             $data->categoryId != null || $data->categoryId != '' ||
-    //             $data->price != null || $data->price != ''
-    //             // ||
-    //             // $data->ingredients != null || $data->ingredients != ''
-    //             ) {
-    //             $data->ingredients =  json_decode('[
-    //                 { "id": 1, "quantity": 1.0 },
-    //                 { "id": 2, "quantity": 2.0 },
-    //                 { "id": 3, "quantity": 1.0 }
-    //             ]');
-    //             $resp = $this->recipes->createRecipe($data);
-    //             if ($resp['msg']) {
-    //                 $response = json_encode(['status' => 1, 'createdId' => $resp['lastInsertId'], 'message' => 'Record created successfully.']);
-    //             } else {
-    //                 $response = json_encode(['status' => 0, 'message' => 'Error in dataBase.']);
-    //             }
-    //         }
-    //         else {
-    //             $response = json_encode(['status' => 0, 'message' => 'Value not allowed.']);
-    //         }
-    //         echo $response;
-    //     } else {
-    //         echo json_encode('Incorrect execution');
-    //     }
-    // }
 
     /*
     * Add image recipe

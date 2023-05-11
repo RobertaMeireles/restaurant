@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const API_URL = "https://project-tcc.test/restaurant-api/public"
+const API_URL = "http://project-tcc.test/restaurant-api/public"
 
 const login = (username, password) => {
   return axios

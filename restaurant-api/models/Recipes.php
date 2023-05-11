@@ -22,6 +22,13 @@ class Recipes extends Database {
         return $this->getById($this->tableRecipes, '*', 'id =' . $where);
     }
 
+        /*
+    * List all by id 
+    */
+    public function getRecipeByIdWithIngredients($where) {
+        return $this->queryGetView('fullrecipes', 'id = ' . $where);
+    }
+
     /*
     * List recipe with indegredients by ID
     */
@@ -34,7 +41,7 @@ class Recipes extends Database {
     * List recipe by ID
     */
     public function getRecipesByCategory( $where ) {
-        return $this->queryGetView('fullrecipes', 'categoryId = ' . $where);
+        return $this->queryGetView('recipes', 'categoryId = ' . $where);
     }
     /*
     * Add new line recipe-Ingredients
@@ -95,7 +102,7 @@ class Recipes extends Database {
     * Update recipe 
     */
     public function updateRecipe($data, $where) {
-        if($this->getRecipeById($where)) {
+        if($this->getRecipeByIdNoIngredients($where)) {
             $auxArray = [];
             if(!empty($data['ingredients'])) {
                 $auxArray = $data;

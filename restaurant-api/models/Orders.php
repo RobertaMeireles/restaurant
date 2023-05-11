@@ -103,8 +103,6 @@ class Orders extends Database {
             $i++;
         }    
         $result = (array) $this->update($this->tableOrders, $str, 'id = ' . $where);
-        // var_dump($result);
-        // die();
         if ($result) {
             return [
                 'msg' =>  $result['message'] == 1 ? true : false,

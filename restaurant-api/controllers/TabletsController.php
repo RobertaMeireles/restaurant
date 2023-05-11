@@ -115,7 +115,4 @@ class TabletsController extends SecuredController {
             echo json_encode('Incorrect execution.');
         }
     }
-
-
-
 }

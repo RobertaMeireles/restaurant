@@ -38,7 +38,6 @@ const getCurrentUser = () => {
   }
 };
 
-
 // eslint-disable-next-line
 export default {
   create,
