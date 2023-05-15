@@ -20,7 +20,6 @@ export default function ListRecipes() {
     const getRecipes = () => {
         services.getAll(`/recipes`)
         .then(response => {
-            console.log(response.data.message)
             setRecipes(response.data.message)
         })
         .catch(error => {

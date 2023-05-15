@@ -30,7 +30,6 @@ const deleteId = (request) => {
 
 const getCurrentUser = () => {
   const checkUser = JSON.parse(localStorage.getItem("user"));
-  // console.log(checkUser);
   if(checkUser.type === 'adm') {
       return true
   } else {

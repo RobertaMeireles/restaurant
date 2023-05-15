@@ -21,7 +21,26 @@ class RecipesController extends SecuredController
         if ($_SERVER['REQUEST_METHOD'] == 'GET' ) {
             if ( $this->value ) {
                 $res = $this->recipes->getRecipeByIdWithIngredients($this->value);
-                $response = json_encode(['status' => 1, 'message' =>  $res], JSON_UNESCAPED_UNICODE);
+                $recipe = array(
+                    "id"=>$res[0]->id, 
+                    "name"=>$res[0]->name, 
+                    "description"=>$res[0]->description, 
+                    "image"=>$res[0]->image, 
+                    "price"=>$res[0]->price, 
+                    "categoryId"=>$res[0]->categoryId, 
+                    "categoryName"=>$res[0]->categoryName,
+                    "ingredients" => []
+                );
+                foreach ($res as $key => $ingredients) {
+                    $newdata =  array (
+                        'ingredientId' => $ingredients->ingredientsId,
+                        'ingredientName' => $ingredients->ingredientsName,
+                        'ingredientQuantity' => $ingredients->recipeIngredientsQuantity,
+                        'ingredientsUnity' => $ingredients->ingredientsUnity
+                    );
+                    array_push($recipe["ingredients"], $newdata);
+                }
+                $response = json_encode(['status' => 1, 'message' =>  $recipe], JSON_UNESCAPED_UNICODE);
             }else {
                 $res =  $this->recipes->getAllRecipes();
                 $response = json_encode(['status' => 1, 'message' => $res], JSON_UNESCAPED_UNICODE);

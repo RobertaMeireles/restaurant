@@ -26,23 +26,20 @@ const Login = () => {
 
   const handleLogin = () => {
 
-      AuthService.login(username, password).then(
-        () => {
-            window.location.href = "/home"
-        },
-        (error) => {
-          const resMessage =
-            (error.response &&
-              error.response.data &&
-              error.response.data.message) ||
-            error.message ||
-            error.toString();
-
-          setMessage(resMessage);
+      const user = AuthService.login(username, password)
+      const getResultUser  = async () => {
+        const a = await user;
+        if (a) {
+          window.location.href = "/home"
+        } else {
           setSubmitted(true)
           setRegexMessage(false)
+          setMessage("Usuário não existe ou senha invalida.");
         }
-      )
+      };
+
+      getResultUser()
+
     }
 
     return (

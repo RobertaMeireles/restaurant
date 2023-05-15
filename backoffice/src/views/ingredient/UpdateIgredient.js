@@ -42,7 +42,7 @@ export default function UpdateIngredient ()  {
             console.error(error)
             alert(`Um problema ocorreu. Tente mais tarde.`)
         })
-      }
+    }
 
     useEffect (() => {
         if(services.getCurrentUser()) {

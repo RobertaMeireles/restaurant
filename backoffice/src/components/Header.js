@@ -17,7 +17,7 @@ function Header () {
     useEffect (() => {
         if(services.getCurrentUser()) {
             setUserAdm(true)
-        }
+        } 
     }, []);
 
     return (
